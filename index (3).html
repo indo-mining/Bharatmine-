@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>BharatMine</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    *{box-sizing:border-box}
+    :root{
+      --bg:#07110d;--card:#0e1c16;--card2:#12251c;--text:#f4fff8;
+      --muted:#91a99d;--green:#39d98a;--green2:#19a968;--line:#1d3629;
+      --gold:#ffd166;--danger:#ff6b6b
+    }
+    body{
+      margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:radial-gradient(circle at 50% -10%,#174d32 0,#07110d 42%);
+      color:var(--text);min-height:100vh;padding-bottom:88px
+    }
+    .app{max-width:560px;margin:auto;padding:18px 16px}
+    .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+    .brand{display:flex;gap:11px;align-items:center}
+    .logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(145deg,#46e58e,#15965d);
+      display:grid;place-items:center;font-size:24px;font-weight:900;box-shadow:0 8px 30px #1cc97835}
+    h1{font-size:20px;margin:0}.sub{font-size:12px;color:var(--muted);margin-top:2px}
+    .pill{background:#10291e;border:1px solid var(--line);border-radius:999px;padding:8px 11px;font-size:12px;color:#baf6d5}
+    .hero{background:linear-gradient(145deg,#11291f,#0c1914);border:1px solid var(--line);
+      border-radius:25px;padding:22px;text-align:center;box-shadow:0 20px 60px #00000035}
+    .balance-label{color:var(--muted);font-size:13px}.balance{font-size:42px;font-weight:900;letter-spacing:-1px;margin:5px 0}
+    .unit{font-size:15px;color:var(--green);font-weight:700}
+    .rate{display:inline-flex;gap:7px;align-items:center;margin:12px 0 20px;padding:8px 12px;
+      border-radius:999px;background:#0a1711;color:#bde9ce;font-size:12px;border:1px solid var(--line)}
+    .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green)}
+    .mine{width:164px;height:164px;border-radius:50%;margin:4px auto 20px;
+      background:radial-gradient(circle,#1b5e3d 0,#103b29 50%,#0b2319 51%,#0b2319 100%);
+      border:8px solid #183b2b;display:grid;place-items:center;position:relative}
+    .mine:after{content:"";position:absolute;inset:-13px;border-radius:50%;border:1px solid #2c714f55}
+    .pick{font-size:62px;filter:drop-shadow(0 8px 12px #0006);transition:.2s}
+    .mining .pick{animation:bob 1.2s ease-in-out infinite}
+    @keyframes bob{50%{transform:rotate(-12deg) scale(1.05)}}
+    button{font:inherit;border:0;cursor:pointer}
+    .start{width:100%;padding:15px;border-radius:15px;background:linear-gradient(135deg,#3de293,#16a764);
+      color:#03140c;font-weight:900;font-size:16px;box-shadow:0 10px 25px #24c87935}
+    .start.stop{background:#24372e;color:#d7eee2}
+    .timer{margin-top:11px;color:var(--muted);font-size:12px;min-height:18px}
+    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px}
+    .icon{font-size:23px}.card h3{font-size:14px;margin:9px 0 4px}.card p{font-size:11px;color:var(--muted);margin:0;line-height:1.4}
+    .card button{margin-top:12px;width:100%;padding:9px;border-radius:10px;background:#183327;color:#bff7d7;font-size:12px;font-weight:700}
+    .section{margin:22px 0 10px;display:flex;justify-content:space-between;align-items:center}
+    .section h2{font-size:16px;margin:0}.section span{font-size:11px;color:var(--muted)}
+    .task{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);
+      border-radius:15px;padding:12px;margin-bottom:9px}
+    .task .ti{width:38px;height:38px;border-radius:11px;background:#173226;display:grid;place-items:center;font-size:19px}
+    .task-main{flex:1}.task-main b{font-size:13px}.task-main small{display:block;color:var(--muted);margin-top:3px;font-size:10px}
+    .claim{padding:8px 10px;border-radius:10px;background:#2a9d68;color:#fff;font-size:11px;font-weight:800}
+    .claim.done{background:#1a2a22;color:#789487}
+    .nav{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);width:min(528px,calc(100% - 24px));
+      background:#0d1b15ee;backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:18px;
+      display:grid;grid-template-columns:repeat(4,1fr);padding:7px;z-index:10}
+    .nav button{background:none;color:#6f8a7c;padding:8px 3px;font-size:10px}.nav .active{color:var(--green)}
+    .nav i{display:block;font-style:normal;font-size:18px;margin-bottom:3px}
+    .toast{position:fixed;top:15px;left:50%;transform:translate(-50%,-130%);background:#dfffee;color:#06331e;
+      padding:10px 15px;border-radius:12px;font-size:12px;font-weight:800;transition:.3s;z-index:30}
+    .toast.show{transform:translate(-50%,0)}
+    .small-note{font-size:10px;color:#668174;text-align:center;margin:18px 8px 0;line-height:1.5}
+    @media(max-width:380px){.balance{font-size:36px}.mine{width:145px;height:145px}}
+  </style>
+</head>
+<body>
+<div id="toast" class="toast"></div>
+<div class="app">
+  <div class="top">
+    <div class="brand">
+      <div class="logo">B</div>
+      <div><h1>BharatMine</h1><div class="sub" id="hello">Welcome, Miner</div></div>
+    </div>
+    <div class="pill">🇮🇳 BHM</div>
+  </div>
+
+  <section class="hero" id="miningCard">
+    <div class="balance-label">Your Balance</div>
+    <div class="balance"><span id="balance">0.00</span> <span class="unit">BHM</span></div>
+    <div class="rate"><span class="dot"></span> Mining rate: <b>0.25 BHM/hour</b></div>
+    <div class="mine"><div class="pick">⛏️</div></div>
+    <button class="start" id="mineBtn">START MINING</button>
+    <div class="timer" id="timer">Mining is stopped</div>
+  </section>
+
+  <div class="grid">
+    <div class="card"><div class="icon">🎁</div><h3>Daily Reward</h3><p>Claim your daily bonus.</p><button onclick="claimDaily()">Claim +10 BHM</button></div>
+    <div class="card"><div class="icon">👥</div><h3>Invite Friends</h3><p>Share your referral link.</p><button onclick="invite()">Invite</button></div>
+  </div>
+
+  <div class="section"><h2>Daily Tasks</h2><span id="taskCount">0/3 completed</span></div>
+  <div class="task"><div class="ti">📣</div><div class="task-main"><b>Join BharatMine community</b><small>Reward: +5 BHM</small></div><button class="claim" onclick="claimTask(this,5)">CLAIM</button></div>
+  <div class="task"><div class="ti">⭐</div><div class="task-main"><b>Check in today</b><small>Reward: +3 BHM</small></div><button class="claim" onclick="claimTask(this,3)">CLAIM</button></div>
+  <div class="task"><div class="ti">🚀</div><div class="task-main"><b>Start your mining session</b><small>Reward: +2 BHM</small></div><button class="claim" onclick="claimTask(this,2)">CLAIM</button></div>
+
+  <p class="small-note">BharatMine demo mining dashboard. Balance and rewards shown here are stored locally for this frontend demo. A secure backend is required before using real accounts, withdrawals or token balances.</p>
+</div>
+
+<nav class="nav">
+  <button class="active"><i>⛏️</i>Mine</button>
+  <button onclick="showToast('Tasks are available above')"><i>🎯</i>Tasks</button>
+  <button onclick="invite()"><i>👥</i>Invite</button>
+  <button onclick="showToast('Wallet coming with backend')"><i>💼</i>Wallet</button>
+</nav>
+
+<script>
+const tg = window.Telegram?.WebApp;
+if (tg) { tg.ready(); tg.expand(); }
+
+const KEY='bharatmine_demo_v1';
+let state=JSON.parse(localStorage.getItem(KEY)||'null') || {balance:0,mining:false,start:0,last:Date.now(),daily:0};
+let user=tg?.initDataUnsafe?.user;
+if(user){
+  document.getElementById('hello').textContent='Welcome, '+(user.first_name||'Miner');
+}
+
+function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(window._toast);window._toast=setTimeout(()=>t.classList.remove('show'),1800);
+}
+function tick(){
+  if(state.mining){
+    const now=Date.now(), elapsed=(now-state.last)/3600000;
+    state.balance += elapsed*0.25;
+    state.last=now; save();
+    document.getElementById('balance').textContent=state.balance.toFixed(4);
+    const total=Math.floor((now-state.start)/1000);
+    const h=String(Math.floor(total/3600)).padStart(2,'0');
+    const m=String(Math.floor(total%3600/60)).padStart(2,'0');
+    const s=String(total%60).padStart(2,'0');
+    document.getElementById('timer').textContent=`Mining active • ${h}:${m}:${s}`;
+    document.getElementById('miningCard').classList.add('mining');
+  } else {
+    document.getElementById('timer').textContent='Mining is stopped';
+    document.getElementById('miningCard').classList.remove('mining');
+  }
+}
+function render(){
+  document.getElementById('balance').textContent=state.balance.toFixed(4);
+  document.getElementById('mineBtn').textContent=state.mining?'STOP MINING':'START MINING';
+  document.getElementById('mineBtn').classList.toggle('stop',state.mining);
+  tick();
+}
+document.getElementById('mineBtn').onclick=()=>{
+  if(!state.mining){state.mining=true;state.start=Date.now();state.last=Date.now();showToast('⛏️ Mining started!')}
+  else {tick();state.mining=false;showToast('Mining stopped')}
+  save();render();
+};
+function claimDaily(){
+  const today=new Date().toISOString().slice(0,10);
+  if(state.daily===today)return showToast('Daily reward already claimed');
+  state.daily=today;state.balance+=10;save();render();showToast('🎁 +10 BHM added');
+}
+function claimTask(btn,reward){
+  if(btn.classList.contains('done'))return;
+  btn.classList.add('done');btn.textContent='DONE';
+  state.balance+=reward;save();render();
+  document.getElementById('taskCount').textContent=(document.querySelectorAll('.claim.done').length)+'/3 completed';
+  showToast(`🎉 +${reward} BHM added`);
+}
+function invite(){
+  const code=user?.id || 'miner';
+  const link=`https://t.me/BharatMineBot?start=ref_${code}`;
+  if(tg?.openTelegramLink){tg.openTelegramLink('https://t.me/share/url?url='+encodeURIComponent(link)+'&text='+encodeURIComponent('Join me on BharatMine ⛏️'))}
+  else if(navigator.share){navigator.share({title:'BharatMine',text:'Join me on BharatMine ⛏️',url:link})}
+  else {navigator.clipboard?.writeText(link);showToast('Referral link copied')}
+}
+render();
+setInterval(tick,1000);
+</script>
+</body>
+</html>

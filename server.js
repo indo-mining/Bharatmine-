@@ -30,7 +30,7 @@ app.post("/api/mining/stop",async(req,res)=>{try{const u=await auth(req);const c
 app.post("/api/tasks/:id/claim",async(req,res)=>{try{const u=await auth(req),reward=TASKS[req.params.id];if(!reward)return res.status(404).json({error:"Unknown task"});const c=await pool.connect();try{await c.query("BEGIN");const old=await c.query("SELECT 1 FROM task_claims WHERE telegram_id=$1 AND task_id=$2",[u.id,req.params.id]);if(old.rowCount){await c.query("ROLLBACK");return res.status(409).json({error:"Already claimed"})}/* Verify the real task here before crediting. */await c.query("INSERT INTO task_claims VALUES($1,$2)",[u.id,req.params.id]);await c.query("UPDATE users SET balance=balance+$1 WHERE telegram_id=$2",[reward,u.id]);await c.query("COMMIT")}catch(e){await c.query("ROLLBACK");throw e}finally{c.release()}res.json({ok:true,reward})}catch(e){res.status(401).json({error:e.message})}});
 app.get("/api/leaderboard",async(_,res)=>{try{res.json((await pool.query("SELECT username,first_name,balance FROM users ORDER BY balance DESC LIMIT 20")).rows)}catch(e){res.status(500).json({error:"Database error"})}});
 cons const PORT = process.env.PORT || 3000;
-const
+
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`BharatMine server running on port ${PORT}`);
 });

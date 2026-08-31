@@ -213,8 +213,10 @@ app.get("/api/leaderboard", async (_, res) => {
     res.status(500).json({ error: "Database error" });
   }
 });
+const path = require("path");
+
 app.get("/", (req, res) => {
-  res.send("BharatMine is running successfully!");
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 const PORT = process.env.PORT || 10000;
 

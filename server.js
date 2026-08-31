@@ -61,7 +61,7 @@ function verify(initData) {
 }
 
 async function auth(req) {
-  const u = verify(req.headers["x-telegram-init-data"]); h 
+  const u = verify(req.headers["x-telegram-init-data"]);  
 
   if (!u.id) {
     throw Error("Telegram user missing");

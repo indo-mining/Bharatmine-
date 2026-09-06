@@ -184,6 +184,10 @@ function initializeTelegram(){
     telegramUser = tg.initDataUnsafe?.user || null;
 
     console.log('Telegram initData length:', telegramInitData.length);
+    alert(
+  'Telegram initData length: ' +
+  telegramInitData.length
+);
     console.log('Telegram user:', telegramUser);
 
     if(telegramUser){

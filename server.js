@@ -21,16 +21,27 @@ const pool = new Pool({
 // ===============================
 
 const TASKS = {
-  community: 25,
-  updates: 20,
+  instagram: 25,
+  youtube: 30,
+  bot: 10,
+
   invite3: 50,
   game1: 100,
   level5: 250,
-  daily: 10,
-  mine: 5
+  daily: 10
 };
 
 const MAX_MINING_SECONDS = 24 * 60 * 60;
+
+// ===============================
+// TASK LINKS
+// ===============================
+
+const TASK_LINKS = {
+  instagram: "https://www.instagram.com/bharatmine.in",
+  youtube: "https://youtube.com/@bharatmine-in",
+  bot: "https://t.me/BharatMineBot"
+};
 
 // ===============================
 // TELEGRAM MINI APP VERIFICATION
@@ -55,16 +66,11 @@ function verify(initData) {
 
   params.delete("hash");
 
-  // Telegram requires the data-check-string
-  // to be sorted alphabetically by key.
   const dataCheckString = [...params.entries()]
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([key, value]) => `${key}=${value}`)
     .join("\n");
 
-  // Correct Telegram Mini App secret key:
-  // HMAC-SHA256 with key "WebAppData"
-  // and message = bot token.
   const secretKey = crypto
     .createHmac("sha256", "WebAppData")
     .update(process.env.TELEGRAM_BOT_TOKEN)
@@ -75,7 +81,6 @@ function verify(initData) {
     .update(dataCheckString)
     .digest("hex");
 
-  // Timing-safe comparison
   if (
     receivedHash.length !== calculatedHash.length ||
     !crypto.timingSafeEqual(
@@ -86,7 +91,6 @@ function verify(initData) {
     throw new Error("Invalid Telegram signature");
   }
 
-  // Check auth_date
   const authDate = Number(params.get("auth_date"));
 
   if (!authDate || !Number.isFinite(authDate)) {
@@ -95,12 +99,10 @@ function verify(initData) {
 
   const age = Date.now() / 1000 - authDate;
 
-  // 24 hour validity
   if (age > 86400) {
     throw new Error("Expired Telegram data");
   }
 
-  // Prevent obviously invalid future timestamps
   if (age < -60) {
     throw new Error("Invalid Telegram auth date");
   }
@@ -158,7 +160,7 @@ async function auth(req) {
 }
 
 // ===============================
-// HEALTH CHECK
+// HEALTH
 // ===============================
 
 app.get("/health", (req, res) => {
@@ -221,14 +223,12 @@ app.post("/api/mining/start", async (req, res) => {
 
     const dbUser = result.rows[0];
 
-    // Existing mining session
     if (dbUser && dbUser.mining_started_at) {
       const elapsed =
         (Date.now() -
           new Date(dbUser.mining_started_at).getTime()) /
         1000;
 
-      // Still within 24 hours
       if (elapsed < MAX_MINING_SECONDS) {
         return res.json({
           ok: true,
@@ -237,8 +237,6 @@ app.post("/api/mining/start", async (req, res) => {
         });
       }
 
-      // Old session expired.
-      // Clear it first.
       await pool.query(
         `
         UPDATE users
@@ -249,7 +247,6 @@ app.post("/api/mining/start", async (req, res) => {
       );
     }
 
-    // Start fresh mining session
     const started = await pool.query(
       `
       UPDATE users
@@ -314,7 +311,6 @@ app.post("/api/mining/stop", async (req, res) => {
             1000
         );
 
-        // Maximum 24 hours
         const miningSeconds = Math.min(
           elapsedSeconds,
           MAX_MINING_SECONDS
@@ -332,10 +328,7 @@ app.post("/api/mining/stop", async (req, res) => {
             mining_started_at = NULL
           WHERE telegram_id = $2
           `,
-          [
-            reward,
-            user.id
-          ]
+          [reward, user.id]
         );
       }
 
@@ -364,6 +357,32 @@ app.post("/api/mining/stop", async (req, res) => {
 });
 
 // ===============================
+// TASK LINKS
+// ===============================
+
+app.get("/api/tasks", (req, res) => {
+  res.json({
+    instagram: {
+      title: "Follow BharatMine Instagram",
+      url: TASK_LINKS.instagram,
+      reward: TASKS.instagram
+    },
+
+    youtube: {
+      title: "Subscribe BharatMine YouTube",
+      url: TASK_LINKS.youtube,
+      reward: TASKS.youtube
+    },
+
+    bot: {
+      title: "Start BharatMine Bot",
+      url: TASK_LINKS.bot,
+      reward: TASKS.bot
+    }
+  });
+});
+
+// ===============================
 // CLAIM TASK
 // ===============================
 
@@ -385,7 +404,7 @@ app.post("/api/tasks/:id/claim", async (req, res) => {
     try {
       await client.query("BEGIN");
 
-      // Check whether task was already claimed
+      // Check existing claim
       const existing = await client.query(
         `
         SELECT 1
@@ -394,10 +413,7 @@ app.post("/api/tasks/:id/claim", async (req, res) => {
           AND task_id = $2
         FOR UPDATE
         `,
-        [
-          user.id,
-          taskId
-        ]
+        [user.id, taskId]
       );
 
       if (existing.rowCount > 0) {
@@ -408,7 +424,7 @@ app.post("/api/tasks/:id/claim", async (req, res) => {
         });
       }
 
-      // Insert claim record
+      // Save claim
       await client.query(
         `
         INSERT INTO task_claims
@@ -416,10 +432,7 @@ app.post("/api/tasks/:id/claim", async (req, res) => {
         VALUES
           ($1, $2)
         `,
-        [
-          user.id,
-          taskId
-        ]
+        [user.id, taskId]
       );
 
       // Add reward
@@ -429,10 +442,7 @@ app.post("/api/tasks/:id/claim", async (req, res) => {
         SET balance = balance + $1
         WHERE telegram_id = $2
         `,
-        [
-          reward,
-          user.id
-        ]
+        [reward, user.id]
       );
 
       await client.query("COMMIT");
@@ -445,7 +455,6 @@ app.post("/api/tasks/:id/claim", async (req, res) => {
     } catch (error) {
       await client.query("ROLLBACK");
 
-      // Duplicate task claim
       if (error.code === "23505") {
         return res.status(409).json({
           error: "Already claimed"
@@ -497,7 +506,7 @@ app.get("/api/leaderboard", async (req, res) => {
 });
 
 // ===============================
-// SERVE FRONTEND
+// FRONTEND
 // ===============================
 
 app.get("/", (req, res) => {
@@ -510,15 +519,10 @@ app.get("/", (req, res) => {
 // SERVER
 // ===============================
 
-const PORT =
-  process.env.PORT || 10000;
+const PORT = process.env.PORT || 10000;
 
-app.listen(
-  PORT,
-  "0.0.0.0",
-  () => {
-    console.log(
-      `BharatMine server running on port ${PORT}`
-    );
-  }
-);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(
+    `BharatMine server running on port ${PORT}`
+  );
+});

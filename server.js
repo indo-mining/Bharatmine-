@@ -20,19 +20,16 @@ const pool = new Pool({
 // BHARATMINE ECONOMY
 // =========================================
 
-// Controlled task rewards.
-// इन्हें जानबूझकर छोटा रखा गया है।
 const TASKS = {
   instagram: 2,
   youtube: 2,
   bot: 1,
-
   invite3: 5,
   game1: 5,
   level5: 10
 };
 
-// Mining:
+// Mining rate
 // 0.001 BHM per minute
 const MINING_RATE_PER_MINUTE = 0.001;
 
@@ -48,9 +45,7 @@ const DAILY_CODE_REWARD = 2;
 
 const TASK_LINKS = {
   instagram: "https://www.instagram.com/bharatmine.in",
-
   youtube: "https://youtube.com/@bharatmine-in",
-
   bot: "https://t.me/BharatMineBot"
 };
 
@@ -58,8 +53,6 @@ const TASK_LINKS = {
 // DAILY CODE
 // =========================================
 
-// India date.
-// इससे Daily Code भारत के हिसाब से बदलेगा।
 function getIndiaDate() {
   return new Intl.DateTimeFormat("en-CA", {
     timeZone: "Asia/Kolkata",
@@ -69,9 +62,6 @@ function getIndiaDate() {
   }).format(new Date());
 }
 
-// Daily Code secret.
-// Render Environment में DAILY_CODE_SECRET डाल सकते हैं।
-// अगर नहीं है तो Telegram bot token fallback रहेगा।
 function getDailySecret() {
   return (
     process.env.DAILY_CODE_SECRET ||
@@ -79,7 +69,6 @@ function getDailySecret() {
   );
 }
 
-// Code database में save नहीं होता।
 function generateDailyCode(date) {
   const secret = getDailySecret();
 
@@ -252,9 +241,7 @@ async function rewardFromPool(
     Number(poolResult.rows[0].remaining);
 
   if (remaining < reward) {
-    throw new Error(
-      "Reward pool exhausted"
-    );
+    throw new Error("Reward pool exhausted");
   }
 
   await client.query(
@@ -279,11 +266,144 @@ async function rewardFromPool(
 }
 
 // =========================================
+// AUTO COMPLETE MINING
+// =========================================
+// This function checks whether 24 hours are complete.
+// If complete, reward is added automatically.
+// No STOP button/API is required.
+
+async function settleCompletedMining(userId) {
+  const client = await pool.connect();
+
+  try {
+    await client.query("BEGIN");
+
+    const result = await client.query(
+      `
+      SELECT
+        balance,
+        mining_started_at
+      FROM users
+      WHERE telegram_id = $1
+      FOR UPDATE
+      `,
+      [userId]
+    );
+
+    const dbUser = result.rows[0];
+
+    if (!dbUser) {
+      throw new Error("User not found");
+    }
+
+    if (!dbUser.mining_started_at) {
+      await client.query("COMMIT");
+
+      return {
+        mining: false,
+        completed: false,
+        reward: 0,
+        balance: Number(dbUser.balance || 0)
+      };
+    }
+
+    const startedAt =
+      new Date(
+        dbUser.mining_started_at
+      ).getTime();
+
+    const elapsedSeconds =
+      Math.max(
+        0,
+        (Date.now() - startedAt) / 1000
+      );
+
+    // Still mining
+    if (elapsedSeconds < MAX_MINING_SECONDS) {
+      await client.query("COMMIT");
+
+      return {
+        mining: true,
+        completed: false,
+        reward: 0,
+        balance: Number(dbUser.balance || 0),
+        mining_started_at:
+          dbUser.mining_started_at,
+        elapsed_seconds:
+          Math.floor(elapsedSeconds),
+        remaining_seconds:
+          Math.ceil(
+            MAX_MINING_SECONDS -
+            elapsedSeconds
+          )
+      };
+    }
+
+    // =====================================
+    // 24 HOURS COMPLETE
+    // =====================================
+
+    const reward =
+      (MAX_MINING_SECONDS / 60) *
+      MINING_RATE_PER_MINUTE;
+
+    await rewardFromPool(
+      client,
+      "mining",
+      userId,
+      reward
+    );
+
+    await client.query(
+      `
+      UPDATE users
+      SET mining_started_at = NULL
+      WHERE telegram_id = $1
+      `,
+      [userId]
+    );
+
+    const updated =
+      await client.query(
+        `
+        SELECT balance
+        FROM users
+        WHERE telegram_id = $1
+        `,
+        [userId]
+      );
+
+    await client.query("COMMIT");
+
+    return {
+      mining: false,
+      completed: true,
+      reward: Number(
+        reward.toFixed(8)
+      ),
+      balance: Number(
+        updated.rows[0].balance || 0
+      )
+    };
+
+  } catch (error) {
+
+    await client.query("ROLLBACK");
+
+    throw error;
+
+  } finally {
+    client.release();
+  }
+}
+
+// =========================================
 // HEALTH
 // =========================================
 
 app.get("/health", async (req, res) => {
   try {
+
     await pool.query("SELECT 1");
 
     res.json({
@@ -292,7 +412,11 @@ app.get("/health", async (req, res) => {
     });
 
   } catch (error) {
-    console.error("HEALTH ERROR:", error);
+
+    console.error(
+      "HEALTH ERROR:",
+      error
+    );
 
     res.status(500).json({
       ok: false,
@@ -307,7 +431,12 @@ app.get("/health", async (req, res) => {
 
 app.get("/api/me", async (req, res) => {
   try {
+
     const user = await auth(req);
+
+    // Automatically settle completed mining
+    const mining =
+      await settleCompletedMining(user.id);
 
     const result = await pool.query(
       `
@@ -360,7 +489,9 @@ app.get("/api/me", async (req, res) => {
     );
 
     const claimedTasks =
-      claims.rows.map(row => row.task_id);
+      claims.rows.map(
+        row => row.task_id
+      );
 
     if (dailyClaim.rowCount > 0) {
       claimedTasks.push("daily");
@@ -368,11 +499,31 @@ app.get("/api/me", async (req, res) => {
 
     res.json({
       ...result.rows[0],
-      claimed_tasks: claimedTasks
+
+      claimed_tasks:
+        claimedTasks,
+
+      mining_status: {
+        mining:
+          mining.mining,
+
+        completed:
+          mining.completed,
+
+        reward:
+          mining.reward,
+
+        remaining_seconds:
+          mining.remaining_seconds || 0
+      }
     });
 
   } catch (error) {
-    console.error("ME ERROR:", error);
+
+    console.error(
+      "ME ERROR:",
+      error
+    );
 
     res.status(401).json({
       error: error.message
@@ -384,265 +535,262 @@ app.get("/api/me", async (req, res) => {
 // START MINING
 // =========================================
 
-app.post("/api/mining/start", async (req, res) => {
-  try {
-    const user = await auth(req);
-
-    const client = await pool.connect();
+app.post(
+  "/api/mining/start",
+  async (req, res) => {
 
     try {
-      await client.query("BEGIN");
 
-      const result = await client.query(
-        `
-        SELECT mining_started_at
-        FROM users
-        WHERE telegram_id = $1
-        FOR UPDATE
-        `,
-        [user.id]
-      );
+      const user = await auth(req);
 
-      const dbUser = result.rows[0];
+      // First check whether an old session
+      // has already completed.
+      const current =
+        await settleCompletedMining(user.id);
 
-      if (!dbUser) {
-        throw new Error("User not found");
+      // If still mining, don't start another one.
+      if (current.mining) {
+
+        return res.json({
+          ok: true,
+          alreadyMining: true,
+          mining: true,
+          mining_started_at:
+            current.mining_started_at,
+          remaining_seconds:
+            current.remaining_seconds
+        });
       }
 
-      if (dbUser.mining_started_at) {
-        const elapsed =
-          (
-            Date.now() -
-            new Date(
-              dbUser.mining_started_at
-            ).getTime()
-          ) / 1000;
+      const client =
+        await pool.connect();
 
-        if (elapsed < MAX_MINING_SECONDS) {
+      try {
 
-          await client.query("COMMIT");
+        await client.query("BEGIN");
+
+        const result =
+          await client.query(
+            `
+            SELECT mining_started_at
+            FROM users
+            WHERE telegram_id = $1
+            FOR UPDATE
+            `,
+            [user.id]
+          );
+
+        const dbUser =
+          result.rows[0];
+
+        if (!dbUser) {
+          throw new Error(
+            "User not found"
+          );
+        }
+
+        // Extra protection against duplicate starts
+        if (dbUser.mining_started_at) {
+
+          await client.query(
+            "COMMIT"
+          );
 
           return res.json({
             ok: true,
             alreadyMining: true,
+            mining: true,
             mining_started_at:
               dbUser.mining_started_at
           });
         }
 
+        const started =
+          await client.query(
+            `
+            UPDATE users
+            SET mining_started_at = NOW()
+            WHERE telegram_id = $1
+            RETURNING mining_started_at
+            `,
+            [user.id]
+          );
+
         await client.query(
-          `
-          UPDATE users
-          SET mining_started_at = NULL
-          WHERE telegram_id = $1
-          `,
-          [user.id]
+          "COMMIT"
         );
+
+        res.json({
+          ok: true,
+          mining: true,
+          mining_started_at:
+            started.rows[0]
+              .mining_started_at,
+          rate_per_minute:
+            MINING_RATE_PER_MINUTE,
+          duration_seconds:
+            MAX_MINING_SECONDS
+        });
+
+      } catch (error) {
+
+        await client.query(
+          "ROLLBACK"
+        );
+
+        throw error;
+
+      } finally {
+
+        client.release();
       }
-
-      const started = await client.query(
-        `
-        UPDATE users
-        SET mining_started_at = NOW()
-        WHERE telegram_id = $1
-        RETURNING mining_started_at
-        `,
-        [user.id]
-      );
-
-      await client.query("COMMIT");
-
-      res.json({
-        ok: true,
-        mining_started_at:
-          started.rows[0].mining_started_at
-      });
 
     } catch (error) {
 
-      await client.query("ROLLBACK");
+      console.error(
+        "MINING START ERROR:",
+        error
+      );
 
-      throw error;
-
-    } finally {
-      client.release();
+      res.status(500).json({
+        error: error.message
+      });
     }
-
-  } catch (error) {
-    console.error(
-      "MINING START ERROR:",
-      error
-    );
-
-    res.status(500).json({
-      error: error.message
-    });
   }
-});
+);
 
 // =========================================
-// STOP / CLAIM MINING
+// MINING STATUS
 // =========================================
+// Frontend can call this periodically.
+// When 24 hours complete, reward is settled.
 
-app.post("/api/mining/stop", async (req, res) => {
-  try {
-    const user = await auth(req);
-
-    const client = await pool.connect();
+app.get(
+  "/api/mining/status",
+  async (req, res) => {
 
     try {
-      await client.query("BEGIN");
 
-      const result = await client.query(
-        `
-        SELECT
-          balance,
-          mining_started_at
-        FROM users
-        WHERE telegram_id = $1
-        FOR UPDATE
-        `,
-        [user.id]
-      );
+      const user = await auth(req);
 
-      const dbUser = result.rows[0];
-
-      if (!dbUser) {
-        throw new Error("User not found");
-      }
-
-      if (!dbUser.mining_started_at) {
-        throw new Error("Mining is not active");
-      }
-
-      const elapsedSeconds =
-        Math.max(
-          0,
-          (
-            Date.now() -
-            new Date(
-              dbUser.mining_started_at
-            ).getTime()
-          ) / 1000
+      const mining =
+        await settleCompletedMining(
+          user.id
         );
-
-      const miningSeconds =
-        Math.min(
-          elapsedSeconds,
-          MAX_MINING_SECONDS
-        );
-
-      // 0.001 BHM per minute
-      const reward =
-        (miningSeconds / 60) *
-        MINING_RATE_PER_MINUTE;
-
-      if (reward > 0) {
-
-        await rewardFromPool(
-          client,
-          "mining",
-          user.id,
-          reward
-        );
-      }
-
-      await client.query(
-        `
-        UPDATE users
-        SET mining_started_at = NULL
-        WHERE telegram_id = $1
-        `,
-        [user.id]
-      );
-
-      await client.query("COMMIT");
 
       res.json({
         ok: true,
-        reward: Number(
-          reward.toFixed(8)
-        )
+
+        mining:
+          mining.mining,
+
+        completed:
+          mining.completed,
+
+        reward:
+          mining.reward,
+
+        balance:
+          mining.balance,
+
+        mining_started_at:
+          mining.mining_started_at || null,
+
+        elapsed_seconds:
+          mining.elapsed_seconds || 0,
+
+        remaining_seconds:
+          mining.remaining_seconds || 0,
+
+        rate_per_minute:
+          MINING_RATE_PER_MINUTE,
+
+        duration_seconds:
+          MAX_MINING_SECONDS
       });
 
     } catch (error) {
 
-      await client.query("ROLLBACK");
+      console.error(
+        "MINING STATUS ERROR:",
+        error
+      );
 
-      throw error;
-
-    } finally {
-      client.release();
+      res.status(500).json({
+        error: error.message
+      });
     }
-
-  } catch (error) {
-
-    console.error(
-      "MINING STOP ERROR:",
-      error
-    );
-
-    res.status(500).json({
-      error: error.message
-    });
   }
-});
+);
 
 // =========================================
 // TASK LINKS
 // =========================================
 
-app.get("/api/tasks", (req, res) => {
+app.get(
+  "/api/tasks",
+  (req, res) => {
 
-  res.json({
+    res.json({
 
-    instagram: {
-      title:
-        "Follow BharatMine Instagram",
-      url: TASK_LINKS.instagram,
-      reward: TASKS.instagram
-    },
+      instagram: {
+        title:
+          "Follow BharatMine Instagram",
+        url:
+          TASK_LINKS.instagram,
+        reward:
+          TASKS.instagram
+      },
 
-    youtube: {
-      title:
-        "Subscribe BharatMine YouTube",
-      url: TASK_LINKS.youtube,
-      reward: TASKS.youtube
-    },
+      youtube: {
+        title:
+          "Subscribe BharatMine YouTube",
+        url:
+          TASK_LINKS.youtube,
+        reward:
+          TASKS.youtube
+      },
 
-    bot: {
-      title:
-        "Start BharatMine Bot",
-      url: TASK_LINKS.bot,
-      reward: TASKS.bot
-    },
+      bot: {
+        title:
+          "Start BharatMine Bot",
+        url:
+          TASK_LINKS.bot,
+        reward:
+          TASKS.bot
+      },
 
-    invite3: {
-      title:
-        "Invite 3 Friends",
-      reward: TASKS.invite3
-    },
+      invite3: {
+        title:
+          "Invite 3 Friends",
+        reward:
+          TASKS.invite3
+      },
 
-    game1: {
-      title:
-        "Complete Game Task",
-      reward: TASKS.game1
-    },
+      game1: {
+        title:
+          "Complete Game Task",
+        reward:
+          TASKS.game1
+      },
 
-    level5: {
-      title:
-        "Reach Level 5",
-      reward: TASKS.level5
-    },
+      level5: {
+        title:
+          "Reach Level 5",
+        reward:
+          TASKS.level5
+      },
 
-    daily: {
-      title:
-        "Daily Video Code",
-      reward: DAILY_CODE_REWARD
-    }
+      daily: {
+        title:
+          "Daily Video Code",
+        reward:
+          DAILY_CODE_REWARD
+      }
 
-  });
-});
+    });
+  }
+);
 
 // =========================================
 // CLAIM NORMAL TASK
@@ -656,21 +804,25 @@ app.post(
 
       const user = await auth(req);
 
-      const taskId = req.params.id;
+      const taskId =
+        req.params.id;
 
-      // Daily is handled separately
       if (taskId === "daily") {
+
         return res.status(400).json({
           error:
             "Daily task requires daily code"
         });
       }
 
-      const reward = TASKS[taskId];
+      const reward =
+        TASKS[taskId];
 
       if (reward === undefined) {
+
         return res.status(404).json({
-          error: "Unknown task"
+          error:
+            "Unknown task"
         });
       }
 
@@ -679,7 +831,9 @@ app.post(
 
       try {
 
-        await client.query("BEGIN");
+        await client.query(
+          "BEGIN"
+        );
 
         const existing =
           await client.query(
@@ -698,10 +852,13 @@ app.post(
 
         if (existing.rowCount > 0) {
 
-          await client.query("ROLLBACK");
+          await client.query(
+            "ROLLBACK"
+          );
 
           return res.status(409).json({
-            error: "Already claimed"
+            error:
+              "Already claimed"
           });
         }
 
@@ -725,7 +882,9 @@ app.post(
           reward
         );
 
-        await client.query("COMMIT");
+        await client.query(
+          "COMMIT"
+        );
 
         res.json({
           ok: true,
@@ -734,18 +893,24 @@ app.post(
 
       } catch (error) {
 
-        await client.query("ROLLBACK");
+        await client.query(
+          "ROLLBACK"
+        );
 
-        if (error.code === "23505") {
+        if (
+          error.code === "23505"
+        ) {
 
           return res.status(409).json({
-            error: "Already claimed"
+            error:
+              "Already claimed"
           });
         }
 
         throw error;
 
       } finally {
+
         client.release();
       }
 
@@ -757,7 +922,8 @@ app.post(
       );
 
       res.status(500).json({
-        error: error.message
+        error:
+          error.message
       });
     }
   }
@@ -767,101 +933,20 @@ app.post(
 // DAILY CODE STATUS
 // =========================================
 
-app.get("/api/daily", async (req, res) => {
-
-  try {
-
-    const user = await auth(req);
-
-    const today = getIndiaDate();
-
-    const result =
-      await pool.query(
-        `
-        SELECT 1
-        FROM task_claims
-        WHERE telegram_id = $1
-        AND task_id = $2
-        LIMIT 1
-        `,
-        [
-          user.id,
-          `daily:${today}`
-        ]
-      );
-
-    res.json({
-      date: today,
-      reward: DAILY_CODE_REWARD,
-      claimed:
-        result.rowCount > 0
-    });
-
-  } catch (error) {
-
-    console.error(
-      "DAILY STATUS ERROR:",
-      error
-    );
-
-    res.status(500).json({
-      error: error.message
-    });
-  }
-});
-
-// =========================================
-// DAILY CODE CLAIM
-// =========================================
-
-app.post("/api/daily/claim", async (req, res) => {
-
-  try {
-
-    const user = await auth(req);
-
-    const submittedCode =
-      String(
-        req.body.code || ""
-      )
-        .trim()
-        .toUpperCase();
-
-    if (!submittedCode) {
-
-      return res.status(400).json({
-        error: "Daily code required"
-      });
-    }
-
-    const today = getIndiaDate();
-
-    const correctCode =
-      generateDailyCode(today);
-
-    // Code check
-    if (
-      submittedCode !== correctCode
-    ) {
-
-      return res.status(400).json({
-        error: "Invalid daily code"
-      });
-    }
-
-    const taskId =
-      `daily:${today}`;
-
-    const client =
-      await pool.connect();
+app.get(
+  "/api/daily",
+  async (req, res) => {
 
     try {
 
-      await client.query("BEGIN");
+      const user =
+        await auth(req);
 
-      // One claim per user per day
-      const existing =
-        await client.query(
+      const today =
+        getIndiaDate();
+
+      const result =
+        await pool.query(
           `
           SELECT 1
           FROM task_claims
@@ -871,76 +956,183 @@ app.post("/api/daily/claim", async (req, res) => {
           `,
           [
             user.id,
-            taskId
+            `daily:${today}`
           ]
         );
 
-      if (existing.rowCount > 0) {
-
-        await client.query("ROLLBACK");
-
-        return res.status(409).json({
-          error: "Already claimed"
-        });
-      }
-
-      await client.query(
-        `
-        INSERT INTO task_claims
-          (telegram_id, task_id)
-        VALUES
-          ($1, $2)
-        `,
-        [
-          user.id,
-          taskId
-        ]
-      );
-
-      await rewardFromPool(
-        client,
-        "tasks",
-        user.id,
-        DAILY_CODE_REWARD
-      );
-
-      await client.query("COMMIT");
-
       res.json({
-        ok: true,
+        date: today,
         reward:
-          DAILY_CODE_REWARD
+          DAILY_CODE_REWARD,
+        claimed:
+          result.rowCount > 0
       });
 
     } catch (error) {
 
-      await client.query("ROLLBACK");
+      console.error(
+        "DAILY STATUS ERROR:",
+        error
+      );
 
-      if (error.code === "23505") {
+      res.status(500).json({
+        error:
+          error.message
+      });
+    }
+  }
+);
 
-        return res.status(409).json({
-          error: "Already claimed"
+// =========================================
+// DAILY CODE CLAIM
+// =========================================
+
+app.post(
+  "/api/daily/claim",
+  async (req, res) => {
+
+    try {
+
+      const user =
+        await auth(req);
+
+      const submittedCode =
+        String(
+          req.body.code || ""
+        )
+          .trim()
+          .toUpperCase();
+
+      if (!submittedCode) {
+
+        return res.status(400).json({
+          error:
+            "Daily code required"
         });
       }
 
-      throw error;
+      const today =
+        getIndiaDate();
 
-    } finally {
-      client.release();
+      const correctCode =
+        generateDailyCode(today);
+
+      if (
+        submittedCode !== correctCode
+      ) {
+
+        return res.status(400).json({
+          error:
+            "Invalid daily code"
+        });
+      }
+
+      const taskId =
+        `daily:${today}`;
+
+      const client =
+        await pool.connect();
+
+      try {
+
+        await client.query(
+          "BEGIN"
+        );
+
+        const existing =
+          await client.query(
+            `
+            SELECT 1
+            FROM task_claims
+            WHERE telegram_id = $1
+            AND task_id = $2
+            LIMIT 1
+            `,
+            [
+              user.id,
+              taskId
+            ]
+          );
+
+        if (existing.rowCount > 0) {
+
+          await client.query(
+            "ROLLBACK"
+          );
+
+          return res.status(409).json({
+            error:
+              "Already claimed"
+          });
+        }
+
+        await client.query(
+          `
+          INSERT INTO task_claims
+            (telegram_id, task_id)
+          VALUES
+            ($1, $2)
+          `,
+          [
+            user.id,
+            taskId
+          ]
+        );
+
+        await rewardFromPool(
+          client,
+          "tasks",
+          user.id,
+          DAILY_CODE_REWARD
+        );
+
+        await client.query(
+          "COMMIT"
+        );
+
+        res.json({
+          ok: true,
+          reward:
+            DAILY_CODE_REWARD
+        });
+
+      } catch (error) {
+
+        await client.query(
+          "ROLLBACK"
+        );
+
+        if (
+          error.code === "23505"
+        ) {
+
+          return res.status(409).json({
+            error:
+              "Already claimed"
+          });
+        }
+
+        throw error;
+
+      } finally {
+
+        client.release();
+      }
+
+    } catch (error) {
+
+      console.error(
+        "DAILY CLAIM ERROR:",
+        error
+      );
+
+      res.status(500).json({
+        error:
+          error.message
+      });
     }
-
-  } catch (error) {
-
-    console.error(
-      "DAILY CLAIM ERROR:",
-      error
-    );
-
-    res.status(500).json({
-      error: error.message
-    });
   }
-});
+);
 
 // =========================================
 // REWARD POOL STATUS
@@ -976,7 +1168,8 @@ app.get(
       );
 
       res.status(500).json({
-        error: "Economy error"
+        error:
+          "Economy error"
       });
     }
   }
@@ -1017,7 +1210,8 @@ app.get(
       );
 
       res.status(500).json({
-        error: "Database error"
+        error:
+          "Database error"
       });
     }
   }
@@ -1031,9 +1225,17 @@ app.use(
   express.static(__dirname)
 );
 
-app.get("/{*splat}", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
-});
+app.get(
+  "/{*splat}",
+  (req, res) => {
+    res.sendFile(
+      path.join(
+        __dirname,
+        "index.html"
+      )
+    );
+  }
+);
 
 // =========================================
 // SERVER

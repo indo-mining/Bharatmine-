@@ -2,14 +2,20 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+>
 
 <title>BharatMine</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box
+}
 
 body{
   margin:0;
@@ -23,6 +29,8 @@ body{
   margin:auto;
   padding-bottom:90px
 }
+
+/* HEADER */
 
 .header{
   padding:16px;
@@ -53,7 +61,9 @@ body{
   font-weight:900
 }
 
-.brand b{font-size:19px}
+.brand b{
+  font-size:19px
+}
 
 .brand small{
   display:block;
@@ -69,12 +79,16 @@ body{
   text-align:right
 }
 
-.balance small{color:#91a99d}
+.balance small{
+  color:#91a99d
+}
 
 .balance b{
   display:block;
   color:#50e696
 }
+
+/* HERO */
 
 .hero{
   padding:18px 16px 14px;
@@ -92,6 +106,8 @@ body{
   font-size:13px;
   line-height:1.45
 }
+
+/* TABS */
 
 .tabs{
   display:flex;
@@ -117,6 +133,8 @@ body{
   border-color:#39d98a
 }
 
+/* SECTION */
+
 .section{
   padding:0 16px
 }
@@ -137,6 +155,8 @@ body{
   font-size:11px;
   color:#8fa79b
 }
+
+/* TASK */
 
 .task{
   display:flex;
@@ -252,7 +272,9 @@ body{
   margin-top:6px
 }
 
-/* MINING */
+/* =========================
+   MINING SCREEN
+========================= */
 
 .mine-screen{
   display:none;
@@ -293,8 +315,11 @@ body{
 .mining-status{
   font-size:12px;
   color:#9ab2a6;
-  margin-bottom:18px
+  margin-bottom:18px;
+  min-height:16px
 }
+
+/* ONLY ONE MINING BUTTON */
 
 .mine-btn{
   width:100%;
@@ -307,12 +332,17 @@ body{
   color:#04150c
 }
 
-.mine-btn.stop{
-  background:#d65c5c;
-  color:white
+.mine-btn:disabled{
+  opacity:.75;
+  cursor:not-allowed
 }
 
-.mine-btn.claim{
+.mine-btn.active{
+  background:#1c2c24;
+  color:#53e79a
+}
+
+.mine-btn.completed{
   background:#39d98a;
   color:#04150c
 }
@@ -322,6 +352,8 @@ body{
   color:#91aaa0;
   font-size:11px
 }
+
+/* BOTTOM */
 
 .bottom{
   position:fixed;
@@ -358,6 +390,8 @@ body{
   margin-bottom:2px
 }
 
+/* TOAST */
+
 .toast{
   position:fixed;
   top:12px;
@@ -389,24 +423,39 @@ body{
 
 <div class="app">
 
+<!-- ================= HEADER ================= -->
+
 <header class="header">
 
   <div class="brand">
 
-    <div class="logo">B</div>
+    <div class="logo">
+      B
+    </div>
 
     <div>
       <b>BharatMine</b>
-      <small id="user">Telegram Miner</small>
+
+      <small id="user">
+        Telegram Miner
+      </small>
     </div>
 
   </div>
 
   <div class="balance">
-    <small>Balance</small>
+
+    <small>
+      Balance
+    </small>
+
     <b>
-      <span id="bal">0.00</span> BHM
+      <span id="bal">
+        0.00
+      </span>
+      BHM
     </b>
+
   </div>
 
 </header>
@@ -418,7 +467,9 @@ body{
 
 <section class="hero">
 
-  <h1>🎯 Earn BHM</h1>
+  <h1>
+    🎯 Earn BHM
+  </h1>
 
   <p>
     Complete tasks, check the daily code and earn BharatMine rewards.
@@ -457,7 +508,9 @@ body{
 
 <div class="section-title">
 
-  <h2>📋 Available Tasks</h2>
+  <h2>
+    📋 Available Tasks
+  </h2>
 
   <span id="count">
     0/7 completed
@@ -473,11 +526,15 @@ body{
   data-id="instagram"
   data-type="social">
 
-  <div class="icon">📸</div>
+  <div class="icon">
+    📸
+  </div>
 
   <div class="info">
 
-    <b>Follow BharatMine Instagram</b>
+    <b>
+      Follow BharatMine Instagram
+    </b>
 
     <small>
       Follow our official Instagram page
@@ -505,11 +562,15 @@ body{
   data-id="youtube"
   data-type="social">
 
-  <div class="icon">▶️</div>
+  <div class="icon">
+    ▶️
+  </div>
 
   <div class="info">
 
-    <b>Subscribe BharatMine YouTube</b>
+    <b>
+      Subscribe BharatMine YouTube
+    </b>
 
     <small>
       Subscribe to our official YouTube channel
@@ -530,18 +591,22 @@ body{
 </div>
 
 
-<!-- TELEGRAM BOT -->
+<!-- TELEGRAM -->
 
 <div
   class="task"
   data-id="bot"
   data-type="social">
 
-  <div class="icon">🤖</div>
+  <div class="icon">
+    🤖
+  </div>
 
   <div class="info">
 
-    <b>Start BharatMine Bot</b>
+    <b>
+      Start BharatMine Bot
+    </b>
 
     <small>
       Open and start our official Telegram bot
@@ -569,11 +634,15 @@ body{
   data-id="invite3"
   data-type="social">
 
-  <div class="icon">👥</div>
+  <div class="icon">
+    👥
+  </div>
 
   <div class="info">
 
-    <b>Invite 3 Friends</b>
+    <b>
+      Invite 3 Friends
+    </b>
 
     <small>
       Invite friends using your referral link
@@ -601,11 +670,15 @@ body{
   data-id="game1"
   data-type="games">
 
-  <div class="icon">🎮</div>
+  <div class="icon">
+    🎮
+  </div>
 
   <div class="info">
 
-    <b>Play a Partner Game</b>
+    <b>
+      Play a Partner Game
+    </b>
 
     <small>
       Open a game offer and complete its task
@@ -633,11 +706,15 @@ body{
   data-id="level5"
   data-type="games">
 
-  <div class="icon">🏆</div>
+  <div class="icon">
+    🏆
+  </div>
 
   <div class="info">
 
-    <b>Reach Level 5</b>
+    <b>
+      Reach Level 5
+    </b>
 
     <small>
       Complete the level requirement in a partner game
@@ -665,11 +742,15 @@ body{
   data-id="daily"
   data-type="daily">
 
-  <div class="icon">🎁</div>
+  <div class="icon">
+    🎁
+  </div>
 
   <div class="info">
 
-    <b>Daily Code</b>
+    <b>
+      Daily Code
+    </b>
 
     <small id="dailyDescription">
       Enter today's BharatMine Daily Code
@@ -689,7 +770,8 @@ body{
         type="text"
         maxlength="20"
         placeholder="Enter Daily Code"
-        autocomplete="off">
+        autocomplete="off"
+      >
 
       <button
         id="dailyCodeButton"
@@ -716,11 +798,15 @@ body{
   data-id="mine"
   data-type="daily">
 
-  <div class="icon">⛏️</div>
+  <div class="icon">
+    ⛏️
+  </div>
 
   <div class="info">
 
-    <b>Start Mining Today</b>
+    <b>
+      Start Mining Today
+    </b>
 
     <small>
       Start your 24-hour mining session
@@ -747,44 +833,55 @@ body{
 
 <!-- ================= MINING SCREEN ================= -->
 
-<div id="mineScreen" class="mine-screen">
+<div
+  id="mineScreen"
+  class="mine-screen">
 
-<div class="mine-card">
+  <div class="mine-card">
 
-  <div class="mine-icon">
-    ⛏️
+    <div class="mine-icon">
+      ⛏️
+    </div>
+
+    <h1>
+      BharatMine Mining
+    </h1>
+
+    <p>
+      Start your 24-hour mining session.
+    </p>
+
+    <div
+      id="timer"
+      class="timer">
+      24:00:00
+    </div>
+
+    <div
+      id="miningStatus"
+      class="mining-status">
+      Not mining
+    </div>
+
+    <!--
+      IMPORTANT:
+      Only one button.
+      No STOP.
+      No CLAIM.
+    -->
+
+    <button
+      id="mineButton"
+      class="mine-btn"
+      onclick="toggleMining()">
+      START MINING
+    </button>
+
+    <div class="rate">
+      Mining rate: 0.001 BHM per minute
+    </div>
+
   </div>
-
-  <h1>
-    BharatMine Mining
-  </h1>
-
-  <p>
-    Start your 24-hour mining session.
-  </p>
-
-  <div id="timer" class="timer">
-    24:00:00
-  </div>
-
-  <div
-    id="miningStatus"
-    class="mining-status">
-    Not mining
-  </div>
-
-  <button
-    id="mineButton"
-    class="mine-btn"
-    onclick="toggleMining()">
-    START MINING
-  </button>
-
-  <div class="rate">
-    Mining rate: 0.001 BHM per minute
-  </div>
-
-</div>
 
 </div>
 
@@ -799,7 +896,10 @@ body{
   id="mineNav"
   onclick="openMine()">
 
-  <i>⛏️</i>
+  <i>
+    ⛏️
+  </i>
+
   Mine
 
 </button>
@@ -810,7 +910,10 @@ body{
   class="active"
   onclick="openTasks()">
 
-  <i>🎯</i>
+  <i>
+    🎯
+  </i>
+
   Tasks
 
 </button>
@@ -819,7 +922,10 @@ body{
 <button
   onclick="invite()">
 
-  <i>👥</i>
+  <i>
+    👥
+  </i>
+
   Invite
 
 </button>
@@ -828,7 +934,10 @@ body{
 <button
   onclick="toast('Wallet will be connected soon')">
 
-  <i>💼</i>
+  <i>
+    💼
+  </i>
+
   Wallet
 
 </button>
@@ -857,6 +966,7 @@ const tg =
     : null;
 
 let telegramUser = null;
+
 let telegramInitData = '';
 
 let userData = null;
@@ -864,6 +974,10 @@ let userData = null;
 let miningStartedAt = null;
 
 let timerInterval = null;
+
+let miningPollInterval = null;
+
+let completionCheckInProgress = false;
 
 
 /* ==========================================
@@ -1010,12 +1124,16 @@ function requireTelegram(){
 function toast(message){
 
   const x =
-    document.getElementById('toast');
+    document.getElementById(
+      'toast'
+    );
 
   x.textContent =
     message;
 
-  x.classList.add('show');
+  x.classList.add(
+    'show'
+  );
 
   clearTimeout(
     window.toastTimer
@@ -1024,9 +1142,11 @@ function toast(message){
   window.toastTimer =
     setTimeout(
       ()=>{
-        x.classList.remove('show');
+        x.classList.remove(
+          'show'
+        );
       },
-      2200
+      2500
     );
 }
 
@@ -1152,7 +1272,6 @@ async function loadUser(){
 
     updateTaskCount();
 
-
   }catch(e){
 
     console.error(
@@ -1169,19 +1288,24 @@ async function loadUser(){
 
 
 /* ==========================================
-   DAILY STATUS
+   MINING STATUS
+   SERVER SIDE AUTO SETTLEMENT
 ========================================== */
 
-async function loadDailyStatus(){
+async function checkMiningStatus(
+  showCompletionToast = false
+){
 
   if(!requireTelegram())
     return;
+
 
   try{
 
     const r =
       await fetch(
-        API_BASE + '/api/daily',
+        API_BASE +
+        '/api/mining/status',
         {
           method:'GET',
           headers:headers(),
@@ -1194,1180 +1318,56 @@ async function loadDailyStatus(){
       await r.json();
 
 
-    if(!r.ok)
-      return;
-
-
-    const input =
-      document.getElementById(
-        'dailyCodeInput'
-      );
-
-    const button =
-      document.getElementById(
-        'dailyCodeButton'
-      );
-
-    const description =
-      document.getElementById(
-        'dailyDescription'
-      );
-
-
-    if(data.claimed){
-
-      input.disabled =
-        true;
-
-      input.value =
-        '';
-
-      input.placeholder =
-        'Daily code claimed';
-
-      button.disabled =
-        true;
-
-      button.classList.add(
-        'done'
-      );
-
-      button.textContent =
-        'DONE';
-
-      description.textContent =
-        'Today’s Daily Code already claimed';
-
-    }else{
-
-      input.disabled =
-        false;
-
-      button.disabled =
-        false;
-
-      button.classList.remove(
-        'done'
-      );
-
-      button.textContent =
-        'CLAIM';
-
-      description.textContent =
-        'Enter today’s BharatMine Daily Code';
-
-    }
-
-  }catch(e){
-
-    console.error(
-      'DAILY STATUS ERROR:',
-      e
-    );
-
-  }
-}
-
-
-/* ==========================================
-   DAILY CODE CLAIM
-========================================== */
-
-async function claimDailyCode(){
-
-  if(!requireTelegram())
-    return;
-
-
-  const input =
-    document.getElementById(
-      'dailyCodeInput'
-    );
-
-  const button =
-    document.getElementById(
-      'dailyCodeButton'
-    );
-
-
-  const code =
-    input.value
-      .trim()
-      .toUpperCase();
-
-
-  if(!code){
-
-    toast(
-      'Enter today’s Daily Code'
-    );
-
-    input.focus();
-
-    return;
-  }
-
-
-  button.disabled =
-    true;
-
-
-  try{
-
-    const r =
-      await fetch(
-        API_BASE +
-        '/api/daily/claim',
-        {
-          method:'POST',
-          headers:headers(),
-          body:JSON.stringify({
-            code:code
-          }),
-          cache:'no-store'
-        }
-      );
-
-
-    const data =
-      await r.json();
-
-
-    if(
-      r.status === 409
-    ){
-
-      button.classList.add(
-        'done'
-      );
-
-      button.textContent =
-        'DONE';
-
-      input.disabled =
-        true;
-
-      input.value =
-        '';
-
-      toast(
-        'Daily Code already claimed'
-      );
-
-      await loadUser();
-
-      return;
-    }
-
-
     if(!r.ok){
 
       throw new Error(
         data.error ||
-        'Invalid Daily Code'
+        'Mining status failed'
       );
     }
 
 
-    if(!userData){
-
-      userData = {
-        balance:0
-      };
-
-    }
-
-
-    userData.balance =
-      Number(
-        userData.balance || 0
-      ) +
-      Number(
-        data.reward || 0
-      );
-
-
-    setBalance(
-      userData.balance
-    );
-
-
-    button.classList.add(
-      'done'
-    );
-
-    button.textContent =
-      'DONE';
-
-    input.disabled =
-      true;
-
-    input.value =
-      '';
-
-    toast(
-      '🎉 +' +
-      Number(
-        data.reward || 0
-      ) +
-      ' BHM added'
-    );
-
-
-    updateTaskCount();
-
-
-  }catch(e){
-
-    console.error(
-      'DAILY CLAIM ERROR:',
-      e
-    );
-
-    button.disabled =
-      false;
-
-    toast(
-      e.message ||
-      'Invalid Daily Code'
-    );
-  }
-}
-
-
-/* ==========================================
-   OPEN SOCIAL TASK
-========================================== */
-
-function openTask(
-  btn,
-  id,
-  url
-){
-
-  if(
-    btn.classList.contains(
-      'done'
-    )
-  ){
-
-    toast(
-      'Already claimed'
-    );
-
-    return;
-  }
-
-
-  if(!requireTelegram())
-    return;
-
-
-  /*
-    First click opens task.
-    Second click claims reward.
-  */
-
-  if(
-    btn.dataset.opened !== '1'
-  ){
-
-    btn.dataset.opened =
-      '1';
-
-    btn.textContent =
-      'CLAIM';
-
-
-    try{
-
-      if(
-        tg &&
-        tg.openTelegramLink &&
-        url.includes('t.me/')
-      ){
-
-        tg.openTelegramLink(
-          url
-        );
-
-      }else if(
-        tg &&
-        tg.openLink
-      ){
-
-        tg.openLink(
-          url
-        );
-
-      }else{
-
-        window.open(
-          url,
-          '_blank'
-        );
-
-      }
-
-    }catch(error){
-
-      console.error(
-        'OPEN TASK ERROR:',
-        error
-      );
-
-      window.open(
-        url,
-        '_blank'
-      );
-
-    }
-
-
-    toast(
-      'Task opened — tap CLAIM'
-    );
-
-    return;
-  }
-
-
-  claimTask(
-    btn,
-    id
-  );
-}
-
-
-/* ==========================================
-   CLAIM NORMAL TASK
-========================================== */
-
-async function claimTask(
-  btn,
-  id
-){
-
-  if(
-    btn.classList.contains(
-      'done'
-    )
-  ){
-
-    toast(
-      'Already claimed'
-    );
-
-    return;
-  }
-
-
-  if(id === 'daily'){
-
-    toast(
-      'Use the Daily Code box'
-    );
-
-    return;
-  }
-
-
-  if(!requireTelegram())
-    return;
-
-
-  btn.disabled =
-    true;
-
-
-  try{
-
-    const r =
-      await fetch(
-        API_BASE +
-        '/api/tasks/' +
-        encodeURIComponent(id) +
-        '/claim',
-        {
-          method:'POST',
-          headers:headers(),
-          cache:'no-store'
-        }
-      );
-
-
-    const data =
-      await r.json();
-
-
-    if(
-      r.status === 409
-    ){
-
-      btn.classList.add(
-        'done'
-      );
-
-      btn.textContent =
-        'DONE';
-
-      btn.disabled =
-        true;
-
-      updateTaskCount();
-
-      toast(
-        'Already claimed'
-      );
-
-      return;
-    }
-
-
-    if(!r.ok){
-
-      throw new Error(
-        data.error ||
-        'Task failed'
-      );
-    }
-
-
-    btn.classList.add(
-      'done'
-    );
-
-    btn.textContent =
-      'DONE';
-
-
-    if(!userData){
-
-      userData = {
-        balance:0
-      };
-
-    }
-
-
-    userData.balance =
-      Number(
-        userData.balance || 0
-      ) +
-      Number(
-        data.reward || 0
-      );
-
-
-    setBalance(
-      userData.balance
-    );
-
-
-    updateTaskCount();
-
-
-    toast(
-      '🎉 +' +
-      Number(
-        data.reward || 0
-      ) +
-      ' BHM added'
-    );
-
-
-  }catch(e){
-
-    console.error(
-      'TASK CLAIM ERROR:',
-      e
-    );
-
-    btn.disabled =
-      false;
-
-
-    toast(
-      e.message ||
-      'Task failed'
-    );
-  }
-}
-
-
-/* ==========================================
-   TASK COUNT
-========================================== */
-
-function updateTaskCount(){
-
-  const claimableTasks =
-    document.querySelectorAll(
-      '.task:not([data-id="mine"])'
-    );
-
-
-  let done = 0;
-
-
-  claimableTasks.forEach(
-    task => {
-
-      const id =
-        task.dataset.id;
-
-
-      if(id === 'daily'){
-
-        const button =
-          document.getElementById(
-            'dailyCodeButton'
-          );
-
-        if(
-          button &&
-          button.classList.contains(
-            'done'
-          )
-        ){
-
-          done++;
-
-        }
-
-        return;
-      }
-
-
-      const btn =
-        task.querySelector(
-          '.action'
-        );
-
-
-      if(
-        btn &&
-        btn.classList.contains(
-          'done'
-        )
-      ){
-
-        done++;
-
-      }
-
-    }
-  );
-
-
-  document.getElementById(
-    'count'
-  ).textContent =
-    done +
-    '/' +
-    claimableTasks.length +
-    ' completed';
-}
-
-
-/* ==========================================
-   FILTER TASKS
-========================================== */
-
-function filterTasks(
-  type,
-  el
-){
-
-  document
-    .querySelectorAll(
-      '.tabs button'
-    )
-    .forEach(
-      x =>
-        x.classList.remove(
-          'active'
-        )
-    );
-
-
-  el.classList.add(
-    'active'
-  );
-
-
-  document
-    .querySelectorAll(
-      '.task'
-    )
-    .forEach(
-      t => {
-
-        t.style.display =
-          type === 'all' ||
-          t.dataset.type === type
-            ? 'flex'
-            : 'none';
-
-      }
-    );
-}
-
-
-/* ==========================================
-   SCREENS
-========================================== */
-
-function openMine(){
-
-  document.getElementById(
-    'taskScreen'
-  ).style.display =
-    'none';
-
-
-  document.getElementById(
-    'mineScreen'
-  ).style.display =
-    'block';
-
-
-  document.getElementById(
-    'mineNav'
-  ).classList.add(
-    'active'
-  );
-
-
-  document.getElementById(
-    'taskNav'
-  ).classList.remove(
-    'active'
-  );
-
-
-  updateMiningUI();
-}
-
-
-function openTasks(){
-
-  document.getElementById(
-    'mineScreen'
-  ).style.display =
-    'none';
-
-
-  document.getElementById(
-    'taskScreen'
-  ).style.display =
-    'block';
-
-
-  document.getElementById(
-    'taskNav'
-  ).classList.add(
-    'active'
-  );
-
-
-  document.getElementById(
-    'mineNav'
-  ).classList.remove(
-    'active'
-  );
-}
-
-
-/* ==========================================
-   MINING TOGGLE
-========================================== */
-
-async function toggleMining(){
-
-  if(!requireTelegram())
-    return;
-
-
-  if(!miningStartedAt){
-
-    await startMining();
-
-    return;
-  }
-
-
-  /*
-    Check if 24 hours are completed.
-    If completed -> claim.
-    Otherwise -> stop.
-  */
-
-  const elapsed =
-    Date.now() -
-    new Date(
-      miningStartedAt
-    ).getTime();
-
-
-  const max =
-    24 *
-    60 *
-    60 *
-    1000;
-
-
-  if(elapsed >= max){
-
-    await stopMining();
-
-  }else{
-
-    await stopMining();
-
-  }
-}
-
-
-/* ==========================================
-   START MINING
-========================================== */
-
-async function startMining(){
-
-  try{
-
-    const r =
-      await fetch(
-        API_BASE +
-        '/api/mining/start',
-        {
-          method:'POST',
-          headers:headers(),
-          cache:'no-store'
-        }
-      );
-
-
-    const data =
-      await r.json();
-
-
-    if(!r.ok){
-
-      throw new Error(
-        data.error ||
-        'Could not start mining'
-      );
-    }
+    const previousMining =
+      miningStartedAt;
 
 
     miningStartedAt =
       data.mining_started_at ||
-      new Date().toISOString();
-
-
-    if(userData){
-
-      userData.mining_started_at =
-        miningStartedAt;
-
-    }
-
-
-    updateMiningUI();
-
-
-    toast(
-      '⛏️ Mining started'
-    );
-
-
-  }catch(e){
-
-    console.error(
-      'MINING START ERROR:',
-      e
-    );
-
-    toast(
-      e.message ||
-      'Mining start failed'
-    );
-  }
-}
-
-
-/* ==========================================
-   STOP / CLAIM MINING
-========================================== */
-
-async function stopMining(){
-
-  try{
-
-    const r =
-      await fetch(
-        API_BASE +
-        '/api/mining/stop',
-        {
-          method:'POST',
-          headers:headers(),
-          cache:'no-store'
-        }
-      );
-
-
-    const data =
-      await r.json();
-
-
-    if(!r.ok){
-
-      throw new Error(
-        data.error ||
-        'Could not claim mining reward'
-      );
-    }
-
-
-    miningStartedAt =
       null;
 
 
-    if(userData){
-
-      userData.mining_started_at =
-        null;
-
-    }
-
-
     if(
-      typeof data.balance !== 'undefined'
+      typeof data.balance !==
+      'undefined'
     ){
+
+      if(!userData){
+
+        userData = {};
+
+      }
 
       userData.balance =
         Number(
-          data.balance
+          data.balance || 0
         );
 
       setBalance(
         data.balance
       );
 
-    }else{
-
-      await loadUser();
-
     }
 
 
     updateMiningUI();
 
 
-    toast(
-      '⛏️ Mining reward +' +
-      Number(
-        data.reward || 0
-      ).toFixed(8) +
-      ' BHM'
-    );
-
-
-  }catch(e){
-
-    console.error(
-      'MINING STOP ERROR:',
-      e
-    );
-
-    toast(
-      e.message ||
-      'Mining claim failed'
-    );
-  }
-}
-
-
-/* ==========================================
-   MINING UI
-========================================== */
-
-function updateMiningUI(){
-
-  clearInterval(
-    timerInterval
-  );
-
-
-  const timer =
-    document.getElementById(
-      'timer'
-    );
-
-
-  const status =
-    document.getElementById(
-      'miningStatus'
-    );
-
-
-  const button =
-    document.getElementById(
-      'mineButton'
-    );
-
-
-  if(!miningStartedAt){
-
-    timer.textContent =
-      '24:00:00';
-
-
-    status.textContent =
-      'Not mining';
-
-
-    button.textContent =
-      'START MINING';
-
-
-    button.classList.remove(
-      'stop'
-    );
-
-    button.classList.remove(
-      'claim'
-    );
-
-
-    return;
-  }
-
-
-  button.textContent =
-    'STOP MINING';
-
-
-  button.classList.add(
-    'stop'
-  );
-
-  button.classList.remove(
-    'claim'
-  );
-
-
-  status.textContent =
-    'Mining is active';
-
-
-  function tick(){
-
-    const start =
-      new Date(
-        miningStartedAt
-      ).getTime();
-
-
-    const elapsed =
-      Math.max(
-        0,
-        Date.now() - start
-      );
-
-
-    const max =
-      24 *
-      60 *
-      60 *
-      1000;
-
-
-    const remaining =
-      Math.max(
-        0,
-        max - elapsed
-      );
-
-
-    const totalSeconds =
-      Math.floor(
-        remaining / 1000
-      );
-
-
-    const h =
-      Math.floor(
-        totalSeconds / 3600
-      );
-
-
-    const m =
-      Math.floor(
-        (totalSeconds % 3600) / 60
-      );
-
-
-    const s =
-      totalSeconds % 60;
-
-
-    timer.textContent =
-      String(h).padStart(2,'0') +
-      ':' +
-      String(m).padStart(2,'0') +
-      ':' +
-      String(s).padStart(2,'0');
-
+    /*
+      Backend returns completed=true
+      when 24 hours were completed
+      and reward was automatically added.
+    */
 
     if(
-      remaining <= 0
-    ){
-
-      clearInterval(
-        timerInterval
-      );
-
-
-      status.textContent =
-        '24-hour session completed';
-
-
-      button.textContent =
-        'CLAIM MINING REWARD';
-
-
-      button.classList.remove(
-        'stop'
-      );
-
-      button.classList.add(
-        'claim'
-      );
-
-    }
-
-  }
-
-
-  tick();
-
-
-  timerInterval =
-    setInterval(
-      tick,
-      1000
-    );
-}
-
-
-/* ==========================================
-   REFERRAL
-========================================== */
-
-function invite(){
-
-  if(!telegramUser){
-
-    toast(
-      'Telegram user not available'
-    );
-
-    return;
-  }
-
-
-  const id =
-    telegramUser.id;
-
-
-  const link =
-    'https://t.me/BharatMineBot?start=ref_' +
-    id;
-
-
-  const shareUrl =
-    'https://t.me/share/url?url=' +
-    encodeURIComponent(link) +
-    '&text=' +
-    encodeURIComponent(
-      'Join me on BharatMine ⛏️'
-    );
-
-
-  try{
-
-    if(
-      tg &&
-      tg.openTelegramLink
-    ){
-
-      tg.openTelegramLink(
-        shareUrl
-      );
-
-    }else{
-
-      navigator.clipboard
-        ?.writeText(link);
-
-      toast(
-        'Referral link copied'
-      );
-
-    }
-
-  }catch(error){
-
-    console.error(
-      'REFERRAL ERROR:',
-      error
-    );
-
-    navigator.clipboard
-      ?.writeText(link);
-
-    toast(
-      'Referral link copied'
-    );
-
-  }
-}
-
-
-/* ==========================================
-   ENTER KEY FOR DAILY CODE
-========================================== */
-
-document
-  .getElementById(
-    'dailyCodeInput'
-  )
-  .addEventListener(
-    'keydown',
-    function(e){
-
-      if(e.key === 'Enter'){
-
-        claimDailyCode();
-
-      }
-
-    }
-  );
-
-
-/* ==========================================
-   START APP
-========================================== */
-
-initializeTelegram();
-
-loadUser();
-
-</script>
-
-</body>
-</html>
+      data.completed === true &&
+     

@@ -1216,26 +1216,35 @@ app.get(
     }
   }
 );
-
 // =========================================
 // FRONTEND
 // =========================================
 
-app.use(
-  express.static(__dirname)
-);
+app.use(express.static(__dirname));
 
-app.get(
-  "/{*splat}",
-  (req, res) => {
-    res.sendFile(
-      path.join(
-        __dirname,
-        "index.html"
-      )
-    );
+// Frontend fallback
+// Works with Express 4 and Express 5
+app.use((req, res, next) => {
+  if (req.method !== "GET" && req.method !== "HEAD") {
+    return next();
   }
-);
+
+  res.sendFile(
+    path.join(__dirname, "index.html"),
+    (err) => {
+      if (err) {
+        console.error("FRONTEND ERROR:", err);
+
+        if (!res.headersSent) {
+          res.status(err.statusCode || 500).json({
+            error: "Frontend index.html not found"
+          });
+        }
+      }
+    }
+  );
+});
+
 
 // =========================================
 // SERVER

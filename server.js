@@ -40,6 +40,20 @@ const MAX_MINING_SECONDS = 24 * 60 * 60;
 const DAILY_CODE_REWARD = 2;
 
 // =========================================
+// REFERRAL SYSTEM
+// =========================================
+
+const REFERRAL_BASE_REWARD = 5;
+
+const REFERRAL_MILESTONES = [
+  { count: 3, reward: 15 },
+  { count: 10, reward: 50 },
+  { count: 25, reward: 150 },
+  { count: 50, reward: 350 },
+  { count: 100, reward: 800 }
+];
+
+// =========================================
 // TASK LINKS
 // =========================================
 
@@ -167,42 +181,10 @@ function verify(initData) {
     throw new Error("Telegram user ID missing");
   }
 
-  return user;
-}
-
-// =========================================
-// AUTH
-// =========================================
-
-async function auth(req) {
-  const initData =
-    req.headers["x-telegram-init-data"];
-
-  const user = verify(initData);
-
-  await pool.query(
-    `
-    INSERT INTO users
-      (telegram_id, username, first_name, last_seen_at)
-
-    VALUES
-      ($1, $2, $3, NOW())
-
-    ON CONFLICT (telegram_id)
-
-    DO UPDATE SET
-      username = EXCLUDED.username,
-      first_name = EXCLUDED.first_name,
-      last_seen_at = NOW()
-    `,
-    [
-      user.id,
-      user.username || null,
-      user.first_name || null
-    ]
-  );
-
-  return user;
+  return {
+    user,
+    params
+  };
 }
 
 // =========================================
@@ -266,11 +248,255 @@ async function rewardFromPool(
 }
 
 // =========================================
+// AUTH + REFERRAL
+// =========================================
+
+async function auth(req) {
+  const initData =
+    req.headers["x-telegram-init-data"];
+
+  const verified = verify(initData);
+
+  const user = verified.user;
+  const params = verified.params;
+
+  // Telegram Mini App start parameter
+  const startParam =
+    params.get("start_param") || "";
+
+  const client =
+    await pool.connect();
+
+  try {
+    await client.query("BEGIN");
+
+    // Check whether user already exists
+    const existing =
+      await client.query(
+        `
+        SELECT telegram_id
+        FROM users
+        WHERE telegram_id = $1
+        FOR UPDATE
+        `,
+        [user.id]
+      );
+
+    const isNewUser =
+      existing.rowCount === 0;
+
+    // =====================================
+    // CREATE / UPDATE USER
+    // =====================================
+
+    await client.query(
+      `
+      INSERT INTO users
+        (
+          telegram_id,
+          username,
+          first_name,
+          last_seen_at
+        )
+
+      VALUES
+        ($1, $2, $3, NOW())
+
+      ON CONFLICT (telegram_id)
+
+      DO UPDATE SET
+        username = EXCLUDED.username,
+        first_name = EXCLUDED.first_name,
+        last_seen_at = NOW()
+      `,
+      [
+        user.id,
+        user.username || null,
+        user.first_name || null
+      ]
+    );
+
+    // =====================================
+    // REFERRAL PROCESS
+    // ONLY NEW USERS
+    // =====================================
+
+    if (
+      isNewUser &&
+      startParam
+    ) {
+      let inviterId = null;
+
+      // Expected format:
+      // ref_123456789
+
+      if (
+        startParam.startsWith("ref_")
+      ) {
+        inviterId =
+          startParam.substring(4);
+      }
+
+      // Validate inviter ID
+      if (
+        inviterId &&
+        /^\d+$/.test(inviterId) &&
+        String(inviterId) !== String(user.id)
+      ) {
+
+        // Check inviter exists
+        const inviter =
+          await client.query(
+            `
+            SELECT telegram_id
+            FROM users
+            WHERE telegram_id = $1
+            FOR UPDATE
+            `,
+            [inviterId]
+          );
+
+        if (
+          inviter.rowCount > 0
+        ) {
+
+          // Save referral
+          const referral =
+            await client.query(
+              `
+              INSERT INTO referrals
+                (
+                  invited_id,
+                  inviter_id
+                )
+
+              VALUES
+                ($1, $2)
+
+              ON CONFLICT (invited_id)
+              DO NOTHING
+
+              RETURNING invited_id
+              `,
+              [
+                user.id,
+                inviterId
+              ]
+            );
+
+          // =================================
+          // NEW REFERRAL SUCCESSFULLY CREATED
+          // =================================
+
+          if (
+            referral.rowCount > 0
+          ) {
+
+            // Base reward
+            await rewardFromPool(
+              client,
+              "referrals",
+              inviterId,
+              REFERRAL_BASE_REWARD
+            );
+
+            // Count referrals
+            const countResult =
+              await client.query(
+                `
+                SELECT
+                  COUNT(*)::INTEGER AS count
+                FROM referrals
+                WHERE inviter_id = $1
+                `,
+                [inviterId]
+              );
+
+            const referralCount =
+              Number(
+                countResult.rows[0].count
+              );
+
+            // =================================
+            // MILESTONE REWARDS
+            // =================================
+
+            for (
+              const milestone
+              of REFERRAL_MILESTONES
+            ) {
+
+              if (
+                referralCount >=
+                milestone.count
+              ) {
+
+                const milestoneInsert =
+                  await client.query(
+                    `
+                    INSERT INTO referral_rewards
+                      (
+                        telegram_id,
+                        milestone,
+                        reward
+                      )
+
+                    VALUES
+                      ($1, $2, $3)
+
+                    ON CONFLICT
+                      (telegram_id, milestone)
+                    DO NOTHING
+
+                    RETURNING milestone
+                    `,
+                    [
+                      inviterId,
+                      milestone.count,
+                      milestone.reward
+                    ]
+                  );
+
+                // Give milestone reward only once
+                if (
+                  milestoneInsert.rowCount > 0
+                ) {
+
+                  await rewardFromPool(
+                    client,
+                    "referrals",
+                    inviterId,
+                    milestone.reward
+                  );
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    await client.query("COMMIT");
+
+    return user;
+
+  } catch (error) {
+
+    await client.query("ROLLBACK");
+
+    throw error;
+
+  } finally {
+
+    client.release();
+  }
+}
+
+// =========================================
 // AUTO COMPLETE MINING
 // =========================================
-// This function checks whether 24 hours are complete.
-// If complete, reward is added automatically.
-// No STOP button/API is required.
+// 24 hours complete hone par reward automatically
+// balance me add hota hai.
 
 async function settleCompletedMining(userId) {
   const client = await pool.connect();
@@ -303,7 +529,9 @@ async function settleCompletedMining(userId) {
         mining: false,
         completed: false,
         reward: 0,
-        balance: Number(dbUser.balance || 0)
+        balance: Number(
+          dbUser.balance || 0
+        )
       };
     }
 
@@ -319,14 +547,19 @@ async function settleCompletedMining(userId) {
       );
 
     // Still mining
-    if (elapsedSeconds < MAX_MINING_SECONDS) {
+    if (
+      elapsedSeconds <
+      MAX_MINING_SECONDS
+    ) {
       await client.query("COMMIT");
 
       return {
         mining: true,
         completed: false,
         reward: 0,
-        balance: Number(dbUser.balance || 0),
+        balance: Number(
+          dbUser.balance || 0
+        ),
         mining_started_at:
           dbUser.mining_started_at,
         elapsed_seconds:
@@ -393,6 +626,7 @@ async function settleCompletedMining(userId) {
     throw error;
 
   } finally {
+
     client.release();
   }
 }
@@ -497,11 +731,37 @@ app.get("/api/me", async (req, res) => {
       claimedTasks.push("daily");
     }
 
+    // Referral count
+    const referralCountResult =
+      await pool.query(
+        `
+        SELECT COUNT(*)::INTEGER AS count
+        FROM referrals
+        WHERE inviter_id = $1
+        `,
+        [user.id]
+      );
+
+    const referralCount =
+      Number(
+        referralCountResult.rows[0].count
+      );
+
     res.json({
       ...result.rows[0],
 
       claimed_tasks:
         claimedTasks,
+
+      referrals: {
+        count: referralCount,
+        reward_per_referral:
+          REFERRAL_BASE_REWARD,
+        referral_link:
+          `https://t.me/BharatMineBot?start=ref_${user.id}`,
+        milestones:
+          REFERRAL_MILESTONES
+      },
 
       mining_status: {
         mining:
@@ -532,6 +792,92 @@ app.get("/api/me", async (req, res) => {
 });
 
 // =========================================
+// REFERRAL DETAILS
+// =========================================
+
+app.get(
+  "/api/referrals",
+  async (req, res) => {
+
+    try {
+
+      const user =
+        await auth(req);
+
+      const countResult =
+        await pool.query(
+          `
+          SELECT COUNT(*)::INTEGER AS count
+          FROM referrals
+          WHERE inviter_id = $1
+          `,
+          [user.id]
+        );
+
+      const count =
+        Number(
+          countResult.rows[0].count
+        );
+
+      const referrals =
+        await pool.query(
+          `
+          SELECT
+            r.invited_id,
+            u.username,
+            u.first_name,
+            r.created_at
+          FROM referrals r
+          LEFT JOIN users u
+            ON u.telegram_id = r.invited_id
+          WHERE r.inviter_id = $1
+          ORDER BY r.created_at DESC
+          `,
+          [user.id]
+        );
+
+      const nextMilestone =
+        REFERRAL_MILESTONES.find(
+          item => count < item.count
+        ) || null;
+
+      res.json({
+        ok: true,
+
+        count,
+
+        reward_per_referral:
+          REFERRAL_BASE_REWARD,
+
+        referral_link:
+          `https://t.me/BharatMineBot?start=ref_${user.id}`,
+
+        next_milestone:
+          nextMilestone,
+
+        milestones:
+          REFERRAL_MILESTONES,
+
+        referrals:
+          referrals.rows
+      });
+
+    } catch (error) {
+
+      console.error(
+        "REFERRAL ERROR:",
+        error
+      );
+
+      res.status(500).json({
+        error:
+          error.message
+      });
+    }
+  }
+);
+
+// =========================================
 // START MINING
 // =========================================
 
@@ -543,12 +889,13 @@ app.post(
 
       const user = await auth(req);
 
-      // First check whether an old session
-      // has already completed.
+      // Check old session
       const current =
-        await settleCompletedMining(user.id);
+        await settleCompletedMining(
+          user.id
+        );
 
-      // If still mining, don't start another one.
+      // Already mining
       if (current.mining) {
 
         return res.json({
@@ -589,8 +936,10 @@ app.post(
           );
         }
 
-        // Extra protection against duplicate starts
-        if (dbUser.mining_started_at) {
+        // Duplicate protection
+        if (
+          dbUser.mining_started_at
+        ) {
 
           await client.query(
             "COMMIT"
@@ -653,7 +1002,8 @@ app.post(
       );
 
       res.status(500).json({
-        error: error.message
+        error:
+          error.message
       });
     }
   }
@@ -662,8 +1012,6 @@ app.post(
 // =========================================
 // MINING STATUS
 // =========================================
-// Frontend can call this periodically.
-// When 24 hours complete, reward is settled.
 
 app.get(
   "/api/mining/status",
@@ -717,7 +1065,8 @@ app.get(
       );
 
       res.status(500).json({
-        error: error.message
+        error:
+          error.message
       });
     }
   }
@@ -850,7 +1199,9 @@ app.post(
             ]
           );
 
-        if (existing.rowCount > 0) {
+        if (
+          existing.rowCount > 0
+        ) {
 
           await client.query(
             "ROLLBACK"
@@ -1054,7 +1405,9 @@ app.post(
             ]
           );
 
-        if (existing.rowCount > 0) {
+        if (
+          existing.rowCount > 0
+        ) {
 
           await client.query(
             "ROLLBACK"
@@ -1216,6 +1569,7 @@ app.get(
     }
   }
 );
+
 // =========================================
 // FRONTEND
 // =========================================
@@ -1223,28 +1577,42 @@ app.get(
 app.use(express.static(__dirname));
 
 // Frontend fallback
-// Works with Express 4 and Express 5
 app.use((req, res, next) => {
-  if (req.method !== "GET" && req.method !== "HEAD") {
+
+  if (
+    req.method !== "GET" &&
+    req.method !== "HEAD"
+  ) {
     return next();
   }
 
   res.sendFile(
-    path.join(__dirname, "index.html"),
+    path.join(
+      __dirname,
+      "index.html"
+    ),
     (err) => {
+
       if (err) {
-        console.error("FRONTEND ERROR:", err);
+
+        console.error(
+          "FRONTEND ERROR:",
+          err
+        );
 
         if (!res.headersSent) {
-          res.status(err.statusCode || 500).json({
-            error: "Frontend index.html not found"
+
+          res.status(
+            err.statusCode || 500
+          ).json({
+            error:
+              "Frontend index.html not found"
           });
         }
       }
     }
   );
 });
-
 
 // =========================================
 // SERVER

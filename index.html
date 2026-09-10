@@ -2481,4 +2481,635 @@ REFERRAL USER LIST
 ========================================= */
 
 const referralList =
-document.get
+document.getElementById(
+"referralList"
+);
+
+
+referralList.innerHTML = "";
+
+
+if(
+Array.isArray(
+referralData.referrals
+) &&
+referralData.referrals.length > 0
+){
+
+const title =
+document.createElement("div");
+
+
+title.className =
+"section-title";
+
+
+title.innerHTML = `
+<h2>👥 My Referrals</h2>
+<span>${referralData.referrals.length}</span>
+`;
+
+
+referralList.appendChild(title);
+
+
+referralData.referrals.forEach(user=>{
+
+const row =
+document.createElement("div");
+
+
+row.className =
+"referral-user";
+
+
+const name =
+user.username
+? "@" + user.username
+: (
+user.first_name ||
+"Miner"
+);
+
+
+const joined =
+user.created_at
+? new Date(
+user.created_at
+).toLocaleDateString()
+: "";
+
+
+row.innerHTML = `
+
+<div class="referral-avatar">
+⛏️
+</div>
+
+<div class="referral-user-info">
+
+<b>${escapeHtml(name)}</b>
+
+<small>
+Joined ${escapeHtml(joined)}
+</small>
+
+</div>
+
+<div class="referral-earned">
++5 BHM
+</div>
+
+`;
+
+
+referralList.appendChild(row);
+
+});
+
+}else{
+
+const empty =
+document.createElement("div");
+
+
+empty.className =
+"referral-note";
+
+
+empty.textContent =
+"Invite your first friend to start earning referral BHM.";
+
+
+referralList.appendChild(empty);
+
+}
+
+}
+
+
+/* =========================================
+ESCAPE HTML
+========================================= */
+
+function escapeHtml(value){
+
+return String(value || "")
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
+}
+
+
+/* =========================================
+COPY REFERRAL LINK
+========================================= */
+
+async function copyReferralLink(){
+
+const link =
+getReferralLink();
+
+
+if(!link){
+
+toast(
+"Referral link not available"
+);
+
+return;
+
+}
+
+
+try{
+
+await navigator.clipboard.writeText(link);
+
+toast(
+"📋 Referral link copied!"
+);
+
+
+}catch(error){
+
+/*
+Fallback for Telegram/mobile browsers.
+*/
+
+const textarea =
+document.createElement("textarea");
+
+
+textarea.value =
+link;
+
+
+textarea.style.position =
+"fixed";
+
+
+textarea.style.opacity =
+"0";
+
+
+document.body.appendChild(
+textarea
+);
+
+
+textarea.select();
+
+
+try{
+
+document.execCommand("copy");
+
+toast(
+"📋 Referral link copied!"
+);
+
+}catch(e){
+
+toast(
+"Copy failed. Please copy the link manually."
+);
+
+}
+
+
+document.body.removeChild(
+textarea
+);
+
+}
+
+}
+
+
+/* =========================================
+SHARE REFERRAL LINK
+========================================= */
+
+function shareReferralLink(){
+
+if(!requireTelegram())
+return;
+
+
+const link =
+getReferralLink();
+
+
+if(!link){
+
+toast(
+"Referral link not available"
+);
+
+return;
+
+}
+
+
+const shareText =
+"⛏️ Join me on BharatMine and start mining BHM!";
+
+
+const shareUrl =
+"https://t.me/share/url?url=" +
+encodeURIComponent(link) +
+"&text=" +
+encodeURIComponent(shareText);
+
+
+try{
+
+tg.openTelegramLink(
+shareUrl
+);
+
+}catch(error){
+
+window.open(
+shareUrl,
+"_blank"
+);
+
+}
+
+}
+
+
+/* =========================================
+DAILY STATUS
+========================================= */
+
+async function loadDailyStatus(){
+
+if(!requireTelegram())
+return;
+
+
+try{
+
+const r =
+await fetch(
+API_BASE + "/api/daily",
+{
+method:"GET",
+headers:headers(),
+cache:"no-store"
+}
+);
+
+
+const data =
+await r.json();
+
+
+if(!r.ok){
+
+throw new Error(
+data.error ||
+"Daily status failed"
+);
+
+}
+
+
+const button =
+document.getElementById(
+"dailyCodeButton"
+);
+
+
+const input =
+document.getElementById(
+"dailyCodeInput"
+);
+
+
+if(data.claimed){
+
+button.textContent =
+"DONE";
+
+button.classList.add("done");
+
+button.disabled =
+true;
+
+input.disabled =
+true;
+
+}else{
+
+button.textContent =
+"CLAIM";
+
+button.classList.remove("done");
+
+button.disabled =
+false;
+
+input.disabled =
+false;
+
+}
+
+
+}catch(error){
+
+console.error(
+"DAILY STATUS ERROR:",
+error
+);
+
+}
+
+}
+
+
+/* =========================================
+DAILY CODE CLAIM
+========================================= */
+
+async function claimDailyCode(){
+
+if(!requireTelegram())
+return;
+
+
+const input =
+document.getElementById(
+"dailyCodeInput"
+);
+
+
+const button =
+document.getElementById(
+"dailyCodeButton"
+);
+
+
+const code =
+String(
+input.value || ""
+)
+.trim()
+.toUpperCase();
+
+
+if(!code){
+
+toast(
+"Enter today's Daily Code"
+);
+
+return;
+
+}
+
+
+button.disabled =
+true;
+
+
+try{
+
+const r =
+await fetch(
+API_BASE + "/api/daily/claim",
+{
+method:"POST",
+headers:headers(),
+body:JSON.stringify({
+code:code
+})
+}
+);
+
+
+const data =
+await r.json();
+
+
+if(!r.ok){
+
+throw new Error(
+data.error ||
+"Daily code failed"
+);
+
+}
+
+
+await loadUser();
+
+
+button.textContent =
+"DONE";
+
+button.classList.add("done");
+
+input.disabled =
+true;
+
+
+toast(
+"🎁 +" +
+Number(data.reward || 2) +
+" BHM added"
+);
+
+
+}catch(error){
+
+console.error(
+"DAILY CLAIM ERROR:",
+error
+);
+
+
+button.disabled =
+false;
+
+
+toast(
+error.message ||
+"Invalid daily code"
+);
+
+}
+
+}
+
+
+/* =========================================
+TASK COUNT
+========================================= */
+
+function updateTaskCount(){
+
+const ids = [
+"instagram",
+"youtube",
+"bot",
+"invite3",
+"game1",
+"level5",
+"daily"
+];
+
+
+let completed =
+0;
+
+
+ids.forEach(id=>{
+
+const task =
+document.querySelector(
+'.task[data-id="' + id + '"]'
+);
+
+
+if(!task)
+return;
+
+
+const button =
+task.querySelector(".action");
+
+
+if(
+button &&
+button.disabled &&
+button.textContent === "DONE"
+){
+
+completed++;
+
+}
+
+});
+
+
+document.getElementById(
+"count"
+).textContent =
+completed +
+"/7 completed";
+
+}
+
+
+/* =========================================
+PERIODIC MINING CHECK
+========================================= */
+
+function startMiningPolling(){
+
+clearInterval(
+miningPollInterval
+);
+
+
+miningPollInterval =
+setInterval(
+()=>{
+checkMiningStatus(false);
+},
+15000
+);
+
+}
+
+
+/* =========================================
+PAGE VISIBILITY
+========================================= */
+
+document.addEventListener(
+"visibilitychange",
+()=>{
+
+if(
+document.visibilityState === "visible"
+){
+
+checkMiningStatus(true);
+
+}
+
+}
+);
+
+
+/* =========================================
+DAILY INPUT
+========================================= */
+
+document.addEventListener(
+"DOMContentLoaded",
+()=>{
+
+const input =
+document.getElementById(
+"dailyCodeInput"
+);
+
+
+if(input){
+
+input.addEventListener(
+"keydown",
+event=>{
+
+if(event.key === "Enter"){
+
+claimDailyCode();
+
+}
+
+}
+);
+
+}
+
+}
+);
+
+
+/* =========================================
+START APP
+========================================= */
+
+(async function(){
+
+const telegramOK =
+initializeTelegram();
+
+
+if(!telegramOK)
+return;
+
+
+await loadUser();
+
+
+await checkMiningStatus(false);
+
+
+startMiningPolling();
+
+})();
+
+</script>
+
+</body>
+</html>

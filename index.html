@@ -1,7 +1,14 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>BharatMine</title><script src="https://telegram.org/js/telegram-web-app.js"></script><style>*{box-sizing:border-box}
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>BharatMine</title>
+
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<style>
+*{box-sizing:border-box}
 
 body{
 margin:0;
@@ -237,6 +244,241 @@ font-size:9px;
 margin-top:6px
 }
 
+/* =========================================
+REFERRAL
+========================================= */
+
+.referral-screen{
+display:none;
+padding:18px 16px
+}
+
+.referral-hero{
+background:linear-gradient(145deg,#123c27,#0d1d15);
+border:1px solid #244636;
+border-radius:22px;
+padding:22px 18px;
+text-align:center
+}
+
+.referral-icon{
+font-size:52px;
+margin-bottom:5px
+}
+
+.referral-hero h1{
+margin:5px 0;
+font-size:25px
+}
+
+.referral-hero p{
+margin:7px 0 0;
+font-size:12px;
+color:#91aaa0;
+line-height:1.5
+}
+
+.referral-stats{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:9px;
+margin-top:12px
+}
+
+.referral-stat{
+background:#0e1d16;
+border:1px solid #1b3528;
+border-radius:15px;
+padding:15px 10px;
+text-align:center
+}
+
+.referral-stat b{
+display:block;
+font-size:22px;
+color:#53e79a
+}
+
+.referral-stat small{
+display:block;
+color:#879f92;
+font-size:10px;
+margin-top:4px
+}
+
+.referral-link-box{
+margin-top:12px;
+background:#0e1d16;
+border:1px solid #1b3528;
+border-radius:15px;
+padding:14px
+}
+
+.referral-link-box b{
+font-size:13px
+}
+
+.referral-link{
+margin-top:9px;
+background:#08140e;
+border:1px solid #28513c;
+border-radius:10px;
+padding:10px;
+font-size:10px;
+color:#a9c5b7;
+word-break:break-all;
+line-height:1.4
+}
+
+.referral-actions{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:8px;
+margin-top:9px
+}
+
+.referral-btn{
+border:0;
+border-radius:10px;
+padding:11px 8px;
+font-size:11px;
+font-weight:900
+}
+
+.copy-btn{
+background:#39d98a;
+color:#04150c
+}
+
+.share-btn{
+background:#183426;
+color:#53e79a;
+border:1px solid #28513c
+}
+
+.milestone-box{
+margin-top:12px;
+background:#0e1d16;
+border:1px solid #1b3528;
+border-radius:15px;
+padding:15px
+}
+
+.milestone-title{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:13px
+}
+
+.milestone-title b{
+font-size:13px
+}
+
+.milestone-title span{
+font-size:10px;
+color:#879f92
+}
+
+.milestone{
+margin-bottom:13px
+}
+
+.milestone:last-child{
+margin-bottom:0
+}
+
+.milestone-top{
+display:flex;
+justify-content:space-between;
+font-size:10px;
+margin-bottom:6px
+}
+
+.milestone-top span:first-child{
+color:#d6e9df
+}
+
+.milestone-top span:last-child{
+color:#53e79a;
+font-weight:800
+}
+
+.progress{
+height:7px;
+background:#182a21;
+border-radius:99px;
+overflow:hidden
+}
+
+.progress-bar{
+height:100%;
+width:0%;
+background:#39d98a;
+border-radius:99px;
+transition:.3s
+}
+
+.referral-note{
+margin-top:12px;
+text-align:center;
+font-size:9px;
+color:#718b7e;
+line-height:1.5
+}
+
+.referral-list{
+margin-top:12px
+}
+
+.referral-user{
+display:flex;
+align-items:center;
+gap:10px;
+background:#0e1d16;
+border:1px solid #1b3528;
+border-radius:13px;
+padding:11px;
+margin-bottom:7px
+}
+
+.referral-avatar{
+width:36px;
+height:36px;
+border-radius:11px;
+background:#183426;
+display:grid;
+place-items:center
+}
+
+.referral-user-info{
+flex:1;
+min-width:0
+}
+
+.referral-user-info b{
+font-size:12px;
+display:block;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis
+}
+
+.referral-user-info small{
+font-size:9px;
+color:#718b7e
+}
+
+.referral-earned{
+font-size:10px;
+color:#53e79a;
+font-weight:800
+}
+
+/* =========================================
+MINING
+========================================= */
+
 .mine-screen{
 display:none;
 padding:20px 16px
@@ -307,6 +549,10 @@ color:#91aaa0;
 font-size:11px
 }
 
+/* =========================================
+BOTTOM
+========================================= */
+
 .bottom{
 position:fixed;
 bottom:9px;
@@ -331,7 +577,9 @@ padding:6px;
 font-size:10px
 }
 
-.bottom .active{color:#46e293}
+.bottom .active{
+color:#46e293
+}
 
 .bottom i{
 display:block;
@@ -362,123 +610,365 @@ text-overflow:ellipsis
 .toast.show{
 transform:translate(-50%,0)
 }
-</style></head><body><div id="toast" class="toast"></div><div class="app"><header class="header">
+</style>
+</head>
 
-  <div class="brand">
-    <div class="logo">B</div>
-    <div>
-      <b>BharatMine</b>
-      <small id="user">Telegram Miner</small>
-    </div>
-  </div>  <div class="balance">
-    <small>Balance</small>
-    <b><span id="bal">0.00</span> BHM</b>
-  </div>
-</header><!-- TASK SCREEN --><div id="taskScreen"><section class="hero">
-  <h1>🎯 Earn BHM</h1>
-  <p>
-    Complete tasks, check the daily code and earn BharatMine rewards.
-  </p>
-</section><div class="tabs">
-  <button class="active" onclick="filterTasks('all',this)">All Tasks</button>
-  <button onclick="filterTasks('social',this)">Social</button>
-  <button onclick="filterTasks('games',this)">Games</button>
-  <button onclick="filterTasks('daily',this)">Daily</button>
-</div><section class="section"><div class="section-title">
-  <h2>📋 Available Tasks</h2>
-  <span id="count">0/7 completed</span>
-</div><div class="task" data-id="instagram" data-type="social">
-  <div class="icon">📸</div>
-  <div class="info">
-    <b>Follow BharatMine Instagram</b>
-    <small>Follow our official Instagram page</small>
-    <div class="reward">+2 BHM</div>
-  </div>
-  <button class="action"
-    onclick="openTask(this,'instagram','https://www.instagram.com/bharatmine.in')">
-    OPEN
-  </button>
-</div><div class="task" data-id="youtube" data-type="social">
-  <div class="icon">▶️</div>
-  <div class="info">
-    <b>Subscribe BharatMine YouTube</b>
-    <small>Subscribe to our official YouTube channel</small>
-    <div class="reward">+2 BHM</div>
-  </div>
-  <button class="action"
-    onclick="openTask(this,'youtube','https://youtube.com/@bharatmine-in')">
-    OPEN
-  </button>
-</div><div class="task" data-id="bot" data-type="social">
-  <div class="icon">🤖</div>
-  <div class="info">
-    <b>Start BharatMine Bot</b>
-    <small>Open and start our official Telegram bot</small>
-    <div class="reward">+1 BHM</div>
-  </div>
-  <button class="action"
-    onclick="openTask(this,'bot','https://t.me/BharatMineBot')">
-    OPEN
-  </button>
-</div><div class="task" data-id="invite3" data-type="social">
-  <div class="icon">👥</div>
-  <div class="info">
-    <b>Invite 3 Friends</b>
-    <small>Invite friends using your referral link</small>
-    <div class="reward">+5 BHM</div>
-  </div>
-  <button class="action" onclick="invite()">INVITE</button>
-</div><div class="task" data-id="game1" data-type="games">
-  <div class="icon">🎮</div>
-  <div class="info">
-    <b>Play a Partner Game</b>
-    <small>Open a game offer and complete its task</small>
-    <div class="reward">+5 BHM</div>
-  </div>
-  <button class="action" onclick="claimTask(this,'game1')">CLAIM</button>
-</div><div class="task" data-id="level5" data-type="games">
-  <div class="icon">🏆</div>
-  <div class="info">
-    <b>Reach Level 5</b>
-    <small>Complete the level requirement in a partner game</small>
-    <div class="reward">+10 BHM</div>
-  </div>
-  <button class="action" onclick="claimTask(this,'level5')">CLAIM</button>
-</div><div class="task" data-id="daily" data-type="daily">
-  <div class="icon">🎁</div>
-  <div class="info">
-    <b>Daily Code</b>
-    <small id="dailyDescription">Enter today's BharatMine Daily Code</small>
-    <div class="reward">+2 BHM</div><div id="dailyCodeBox" class="daily-code-box">
-  <input
-    id="dailyCodeInput"
-    class="daily-code-input"
-    type="text"
-    maxlength="20"
-    placeholder="Enter Daily Code"
-    autocomplete="off"
-  ><button
+<body>
+
+<div id="toast" class="toast"></div>
+
+<div class="app">
+
+<header class="header">
+
+<div class="brand">
+<div class="logo">B</div>
+
+<div>
+<b>BharatMine</b>
+<small id="user">Telegram Miner</small>
+</div>
+
+</div>
+
+<div class="balance">
+<small>Balance</small>
+<b><span id="bal">0.00</span> BHM</b>
+</div>
+
+</header>
+
+
+<!-- =========================================
+TASK SCREEN
+========================================= -->
+
+<div id="taskScreen">
+
+<section class="hero">
+
+<h1>🎯 Earn BHM</h1>
+
+<p>
+Complete tasks, check the daily code and earn BharatMine rewards.
+</p>
+
+</section>
+
+
+<div class="tabs">
+
+<button class="active"
+onclick="filterTasks('all',this)">
+All Tasks
+</button>
+
+<button onclick="filterTasks('social',this)">
+Social
+</button>
+
+<button onclick="filterTasks('games',this)">
+Games
+</button>
+
+<button onclick="filterTasks('daily',this)">
+Daily
+</button>
+
+</div>
+
+
+<section class="section">
+
+<div class="section-title">
+
+<h2>📋 Available Tasks</h2>
+
+<span id="count">
+0/7 completed
+</span>
+
+</div>
+
+
+<div class="task"
+data-id="instagram"
+data-type="social">
+
+<div class="icon">📸</div>
+
+<div class="info">
+
+<b>Follow BharatMine Instagram</b>
+
+<small>
+Follow our official Instagram page
+</small>
+
+<div class="reward">
++2 BHM
+</div>
+
+</div>
+
+<button class="action"
+onclick="openTask(this,'instagram','https://www.instagram.com/bharatmine.in')">
+OPEN
+</button>
+
+</div>
+
+
+<div class="task"
+data-id="youtube"
+data-type="social">
+
+<div class="icon">▶️</div>
+
+<div class="info">
+
+<b>Subscribe BharatMine YouTube</b>
+
+<small>
+Subscribe to our official YouTube channel
+</small>
+
+<div class="reward">
++2 BHM
+</div>
+
+</div>
+
+<button class="action"
+onclick="openTask(this,'youtube','https://youtube.com/@bharatmine-in')">
+OPEN
+</button>
+
+</div>
+
+
+<div class="task"
+data-id="bot"
+data-type="social">
+
+<div class="icon">🤖</div>
+
+<div class="info">
+
+<b>Start BharatMine Bot</b>
+
+<small>
+Open and start our official Telegram bot
+</small>
+
+<div class="reward">
++1 BHM
+</div>
+
+</div>
+
+<button class="action"
+onclick="openTask(this,'bot','https://t.me/BharatMineBot')">
+OPEN
+</button>
+
+</div>
+
+
+<div class="task"
+data-id="invite3"
+data-type="social">
+
+<div class="icon">👥</div>
+
+<div class="info">
+
+<b>Invite 3 Friends</b>
+
+<small>
+Invite friends using your referral link
+</small>
+
+<div class="reward">
++5 BHM
+</div>
+
+</div>
+
+<button class="action"
+onclick="invite()">
+INVITE
+</button>
+
+</div>
+
+
+<div class="task"
+data-id="game1"
+data-type="games">
+
+<div class="icon">🎮</div>
+
+<div class="info">
+
+<b>Play a Partner Game</b>
+
+<small>
+Open a game offer and complete its task
+</small>
+
+<div class="reward">
++5 BHM
+</div>
+
+</div>
+
+<button class="action"
+onclick="claimTask(this,'game1')">
+CLAIM
+</button>
+
+</div>
+
+
+<div class="task"
+data-id="level5"
+data-type="games">
+
+<div class="icon">🏆</div>
+
+<div class="info">
+
+<b>Reach Level 5</b>
+
+<small>
+Complete the level requirement in a partner game
+</small>
+
+<div class="reward">
++10 BHM
+</div>
+
+</div>
+
+<button class="action"
+onclick="claimTask(this,'level5')">
+CLAIM
+</button>
+
+</div>
+
+
+<div class="task"
+data-id="daily"
+data-type="daily">
+
+<div class="icon">🎁</div>
+
+<div class="info">
+
+<b>Daily Code</b>
+
+<small id="dailyDescription">
+Enter today's BharatMine Daily Code
+</small>
+
+<div class="reward">
++2 BHM
+</div>
+
+<div id="dailyCodeBox"
+class="daily-code-box">
+
+<input
+id="dailyCodeInput"
+class="daily-code-input"
+type="text"
+maxlength="20"
+placeholder="Enter Daily Code"
+autocomplete="off">
+
+<button
 id="dailyCodeButton"
 class="daily-code-button"
 onclick="claimDailyCode()">
 CLAIM
 </button>
 
-</div><div class="daily-note">
-  Daily code is available once every day.
-</div>  </div>
-</div><div class="task" data-id="mine" data-type="daily">
-  <div class="icon">⛏️</div>
-  <div class="info">
-    <b>Start Mining Today</b>
-    <small>Start your 24-hour mining session</small>
-    <div class="reward">0.001 BHM / minute</div>
-  </div>
-  <button class="action" onclick="openMine()">MINE</button>
-</div></section>
-</div><!-- MINING SCREEN --><div id="mineScreen" class="mine-screen">  <div class="mine-card"><div class="mine-icon">⛏️</div><h1>BharatMine Mining</h1><p>Start your 24-hour mining session.</p><div id="timer" class="timer">24:00:00</div><div id="miningStatus" class="mining-status">
-  Not mining
-</div><button
+</div>
+
+<div class="daily-note">
+Daily code is available once every day.
+</div>
+
+</div>
+</div>
+
+
+<div class="task"
+data-id="mine"
+data-type="daily">
+
+<div class="icon">⛏️</div>
+
+<div class="info">
+
+<b>Start Mining Today</b>
+
+<small>
+Start your 24-hour mining session
+</small>
+
+<div class="reward">
+0.001 BHM / minute
+</div>
+
+</div>
+
+<button class="action"
+onclick="openMine()">
+MINE
+</button>
+
+</div>
+
+</section>
+
+</div>
+
+
+<!-- =========================================
+MINING SCREEN
+========================================= -->
+
+<div id="mineScreen"
+class="mine-screen">
+
+<div class="mine-card">
+
+<div class="mine-icon">
+⛏️
+</div>
+
+<h1>
+BharatMine Mining
+</h1>
+
+<p>
+Start your 24-hour mining session.
+</p>
+
+<div id="timer"
+class="timer">
+24:00:00
+</div>
+
+<div id="miningStatus"
+class="mining-status">
+Not mining
+</div>
+
+<button
 id="mineButton"
 class="mine-btn"
 onclick="toggleMining()">
@@ -486,25 +976,190 @@ START MINING
 </button>
 
 <div class="rate">
-  Mining rate: 0.001 BHM per minute
-</div>  </div></div></div><!-- BOTTOM NAV --><nav class="bottom"><button id="mineNav" onclick="openMine()">
-  <i>⛏️</i>
-  Mine
-</button><button id="taskNav" class="active" onclick="openTasks()">
-  <i>🎯</i>
-  Tasks
-</button><button onclick="invite()">
-  <i>👥</i>
-  Invite
-</button><button onclick="toast('Wallet will be connected soon')">
-  <i>💼</i>
-  Wallet
-</button></nav><script>/* =========================================
+Mining rate: 0.001 BHM per minute
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =========================================
+REFERRAL SCREEN
+========================================= -->
+
+<div id="referralScreen"
+class="referral-screen">
+
+<div class="referral-hero">
+
+<div class="referral-icon">
+👥
+</div>
+
+<h1>
+Invite & Earn
+</h1>
+
+<p>
+Invite friends to BharatMine. Every genuine referral earns you BHM.
+</p>
+
+</div>
+
+
+<div class="referral-stats">
+
+<div class="referral-stat">
+
+<b id="referralCount">
+0
+</b>
+
+<small>
+Total Referrals
+</small>
+
+</div>
+
+
+<div class="referral-stat">
+
+<b id="referralEarned">
+0.00
+</b>
+
+<small>
+Referral BHM
+</small>
+
+</div>
+
+</div>
+
+
+<div class="referral-link-box">
+
+<b>
+🔗 Your Referral Link
+</b>
+
+<div id="referralLink"
+class="referral-link">
+Loading...
+</div>
+
+<div class="referral-actions">
+
+<button
+class="referral-btn copy-btn"
+onclick="copyReferralLink()">
+📋 COPY LINK
+</button>
+
+<button
+class="referral-btn share-btn"
+onclick="shareReferralLink()">
+📤 SHARE
+</button>
+
+</div>
+
+</div>
+
+
+<div class="milestone-box">
+
+<div class="milestone-title">
+
+<b>
+🏆 Referral Milestones
+</b>
+
+<span id="nextMilestone">
+Loading...
+</span>
+
+</div>
+
+<div id="milestoneList">
+</div>
+
+</div>
+
+
+<div class="referral-note">
+More genuine referrals = more BHM rewards.
+Milestone rewards are given only once.
+</div>
+
+
+<div id="referralList"
+class="referral-list">
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =========================================
+BOTTOM NAV
+========================================= -->
+
+<nav class="bottom">
+
+<button
+id="mineNav"
+onclick="openMine()">
+
+<i>⛏️</i>
+Mine
+
+</button>
+
+
+<button
+id="taskNav"
+class="active"
+onclick="openTasks()">
+
+<i>🎯</i>
+Tasks
+
+</button>
+
+
+<button
+id="inviteNav"
+onclick="openReferrals()">
+
+<i>👥</i>
+Invite
+
+</button>
+
+
+<button
+onclick="toast('Wallet will be connected soon')">
+
+<i>💼</i>
+Wallet
+
+</button>
+
+</nav>
+
+
+<script>
+
+/* =========================================
 CONFIG
 ========================================= */
 
 const API_BASE =
 "https://bharatmine-6bg6.onrender.com";
+
 
 const tg =
 window.Telegram &&
@@ -512,13 +1167,20 @@ window.Telegram.WebApp
 ? window.Telegram.WebApp
 : null;
 
+
 let telegramInitData = "";
 let telegramUser = null;
 let userData = null;
+
 let miningStartedAt = null;
+
 let timerInterval = null;
 let miningPollInterval = null;
+
 let toastTimer = null;
+
+let referralData = null;
+
 
 /* =========================================
 TELEGRAM
@@ -527,8 +1189,11 @@ TELEGRAM
 function initializeTelegram(){
 
 if(!tg){
+
 toast("Please open BharatMine inside Telegram");
+
 return false;
+
 }
 
 try{
@@ -537,27 +1202,31 @@ tg.ready();
 tg.expand();
 
 telegramInitData =
-  tg.initData || "";
+tg.initData || "";
 
 telegramUser =
-  tg.initDataUnsafe?.user || null;
+tg.initDataUnsafe?.user || null;
+
 
 if(telegramUser){
 
-  document.getElementById("user").textContent =
-    "@" +
-    (
-      telegramUser.username ||
-      telegramUser.first_name ||
-      "miner"
-    );
+document.getElementById("user").textContent =
+"@" +
+(
+telegramUser.username ||
+telegramUser.first_name ||
+"miner"
+);
 
 }
 
+
 if(!telegramInitData){
 
-  toast("Open BharatMine from Telegram");
-  return false;
+toast("Open BharatMine from Telegram");
+
+return false;
+
 }
 
 return true;
@@ -565,11 +1234,15 @@ return true;
 }catch(error){
 
 console.error(error);
+
 toast("Telegram authentication failed");
+
 return false;
 
 }
+
 }
+
 
 /* =========================================
 HEADERS
@@ -578,14 +1251,23 @@ HEADERS
 function headers(){
 
 if(!telegramInitData && tg){
-telegramInitData = tg.initData || "";
+
+telegramInitData =
+tg.initData || "";
+
 }
 
 return {
+
 "Content-Type":"application/json",
-"x-telegram-init-data":telegramInitData
+
+"x-telegram-init-data":
+telegramInitData
+
 };
+
 }
+
 
 /* =========================================
 TELEGRAM CHECK
@@ -594,23 +1276,32 @@ TELEGRAM CHECK
 function requireTelegram(){
 
 if(!tg){
+
 toast("Please open this app inside Telegram");
+
 return false;
+
 }
 
 if(!telegramInitData){
-telegramInitData = tg.initData || "";
+
+telegramInitData =
+tg.initData || "";
+
 }
 
 if(!telegramInitData){
 
 toast("Telegram authentication data missing");
+
 return false;
 
 }
 
 return true;
+
 }
+
 
 /* =========================================
 TOAST
@@ -623,16 +1314,22 @@ document.getElementById("toast");
 
 if(!x) return;
 
-x.textContent = message;
+x.textContent =
+message;
+
 x.classList.add("show");
 
 clearTimeout(toastTimer);
 
 toastTimer =
 setTimeout(()=>{
+
 x.classList.remove("show");
+
 },2500);
+
 }
+
 
 /* =========================================
 BALANCE
@@ -645,7 +1342,9 @@ Number(value || 0);
 
 document.getElementById("bal").textContent =
 amount.toFixed(2);
+
 }
+
 
 /* =========================================
 LOAD USER
@@ -658,78 +1357,94 @@ if(!requireTelegram()) return;
 try{
 
 const r =
-  await fetch(
-    API_BASE + "/api/me",
-    {
-      method:"GET",
-      headers:headers(),
-      cache:"no-store"
-    }
-  );
+await fetch(
+API_BASE + "/api/me",
+{
+method:"GET",
+headers:headers(),
+cache:"no-store"
+}
+);
+
 
 const data =
-  await r.json();
+await r.json();
+
 
 if(!r.ok){
-  throw new Error(
-    data.error || "Unable to load account"
-  );
+
+throw new Error(
+data.error ||
+"Unable to load account"
+);
+
 }
 
-userData = data;
 
-/*
-  IMPORTANT:
-  Never reset balance here.
-  Always use balance returned by server.
-*/
+userData =
+data;
+
 
 setBalance(data.balance);
 
+
 miningStartedAt =
-  data.mining_started_at || null;
+data.mining_started_at || null;
+
 
 updateMiningUI();
 
+
 if(Array.isArray(data.claimed_tasks)){
 
-  data.claimed_tasks.forEach(taskId=>{
+data.claimed_tasks.forEach(taskId=>{
 
-    const task =
-      document.querySelector(
-        '.task[data-id="' + taskId + '"]'
-      );
+const task =
+document.querySelector(
+'.task[data-id="' + taskId + '"]'
+);
 
-    if(!task) return;
+if(!task) return;
 
-    const btn =
-      task.querySelector(".action");
+const btn =
+task.querySelector(".action");
 
-    if(!btn) return;
+if(!btn) return;
 
-    btn.classList.add("done");
-    btn.textContent = "DONE";
-    btn.disabled = true;
+btn.classList.add("done");
 
-  });
+btn.textContent =
+"DONE";
+
+btn.disabled =
+true;
+
+});
 
 }
+
 
 await loadDailyStatus();
 
 updateTaskCount();
 
+
 }catch(error){
 
-console.error("LOAD USER ERROR:",error);
+console.error(
+"LOAD USER ERROR:",
+error
+);
 
 toast(
-  error.message ||
-  "Unable to load account"
+error.message ||
+"Unable to load account"
 );
 
 }
+
 }
+
 
 /* =========================================
 MINING STATUS
@@ -744,74 +1459,96 @@ if(!requireTelegram()) return;
 try{
 
 const r =
-  await fetch(
-    API_BASE + "/api/mining/status",
-    {
-      method:"GET",
-      headers:headers(),
-      cache:"no-store"
-    }
-  );
+await fetch(
+API_BASE + "/api/mining/status",
+{
+method:"GET",
+headers:headers(),
+cache:"no-store"
+}
+);
+
 
 const data =
-  await r.json();
+await r.json();
+
 
 if(!r.ok){
-  throw new Error(
-    data.error || "Mining status failed"
-  );
+
+throw new Error(
+data.error ||
+"Mining status failed"
+);
+
 }
 
+
 const wasMining =
-  !!miningStartedAt;
+!!miningStartedAt;
+
 
 miningStartedAt =
-  data.mining_started_at || null;
+data.mining_started_at || null;
+
 
 if(typeof data.balance !== "undefined"){
 
-  if(!userData) userData = {};
+if(!userData)
+userData = {};
 
-  userData.balance =
-    Number(data.balance || 0);
 
-  setBalance(data.balance);
+userData.balance =
+Number(data.balance || 0);
+
+
+setBalance(data.balance);
+
 }
+
 
 updateMiningUI();
 
+
 if(
-  data.completed === true &&
-  Number(data.reward || 0) > 0
+data.completed === true &&
+Number(data.reward || 0) > 0
 ){
 
-  if(showCompletionToast || wasMining){
+if(showCompletionToast || wasMining){
 
-    toast(
-      "🎉 Mining complete! +" +
-      Number(data.reward).toFixed(3) +
-      " BHM added"
-    );
+toast(
+"🎉 Mining complete! +" +
+Number(data.reward).toFixed(3) +
+" BHM added"
+);
 
-  }
-
-  if(userData){
-    userData.balance =
-      Number(data.balance || 0);
-  }
-
-  setBalance(data.balance);
 }
+
+
+if(userData){
+
+userData.balance =
+Number(data.balance || 0);
+
+}
+
+
+setBalance(data.balance);
+
+}
+
 
 }catch(error){
 
 console.error(
-  "MINING STATUS ERROR:",
-  error
+"MINING STATUS ERROR:",
+error
 );
 
 }
+
 }
+
 
 /* =========================================
 MINING UI
@@ -828,22 +1565,27 @@ document.getElementById("timer");
 const status =
 document.getElementById("miningStatus");
 
+
 if(!button || !timer || !status)
 return;
 
+
 clearInterval(timerInterval);
+
 
 if(!miningStartedAt){
 
-timer.textContent = "24:00:00";
+timer.textContent =
+"24:00:00";
 
 status.textContent =
-  "Not mining";
+"Not mining";
 
 button.textContent =
-  "START MINING";
+"START MINING";
 
-button.disabled = false;
+button.disabled =
+false;
 
 button.classList.remove("active");
 button.classList.remove("completed");
@@ -852,66 +1594,79 @@ return;
 
 }
 
+
 button.textContent =
 "MINING ACTIVE";
 
-button.disabled = true;
+button.disabled =
+true;
 
 button.classList.add("active");
+
 
 function tick(){
 
 const start =
-  new Date(miningStartedAt).getTime();
+new Date(miningStartedAt).getTime();
+
 
 const elapsed =
-  Math.max(
-    0,
-    (Date.now() - start) / 1000
-  );
+Math.max(
+0,
+(Date.now() - start) / 1000
+);
+
 
 const total =
-  24 * 60 * 60;
+24 * 60 * 60;
+
 
 const remaining =
-  Math.max(
-    0,
-    Math.ceil(total - elapsed)
-  );
+Math.max(
+0,
+Math.ceil(total - elapsed)
+);
+
 
 if(remaining <= 0){
 
-  timer.textContent =
-    "00:00:00";
-
-  status.textContent =
-    "Mining complete — processing reward...";
-
-  /*
-    Ask server to settle reward.
-    Server is the authority.
-  */
-
-  checkMiningStatus(true);
-
-  return;
-}
-
 timer.textContent =
-  formatTime(remaining);
+"00:00:00";
 
 status.textContent =
-  "Mining active • " +
-  formatTime(remaining) +
-  " remaining";
+"Mining complete — processing reward...";
+
+
+checkMiningStatus(true);
+
+return;
 
 }
+
+
+timer.textContent =
+formatTime(remaining);
+
+
+status.textContent =
+"Mining active • " +
+formatTime(remaining) +
+" remaining";
+
+}
+
 
 tick();
 
+
 timerInterval =
-setInterval(tick,1000);
+setInterval(
+tick,
+1000
+);
+
 }
+
 
 /* =========================================
 FORMAT TIME
@@ -925,16 +1680,20 @@ Math.max(
 Math.floor(seconds)
 );
 
+
 const h =
 Math.floor(seconds / 3600);
+
 
 const m =
 Math.floor(
 (seconds % 3600) / 60
 );
 
+
 const s =
 seconds % 60;
+
 
 return (
 String(h).padStart(2,"0") +
@@ -943,7 +1702,9 @@ String(m).padStart(2,"0") +
 ":" +
 String(s).padStart(2,"0")
 );
+
 }
+
 
 /* =========================================
 START MINING
@@ -951,59 +1712,80 @@ START MINING
 
 async function startMining(){
 
-if(!requireTelegram()) return;
+if(!requireTelegram())
+return;
+
 
 const button =
 document.getElementById("mineButton");
 
+
 if(button)
-button.disabled = true;
+button.disabled =
+true;
+
 
 try{
 
 const r =
-  await fetch(
-    API_BASE + "/api/mining/start",
-    {
-      method:"POST",
-      headers:headers(),
-      body:JSON.stringify({})
-    }
-  );
+await fetch(
+API_BASE + "/api/mining/start",
+{
+method:"POST",
+headers:headers(),
+body:JSON.stringify({})
+}
+);
+
 
 const data =
-  await r.json();
+await r.json();
+
 
 if(!r.ok){
-  throw new Error(
-    data.error || "Mining could not start"
-  );
+
+throw new Error(
+data.error ||
+"Mining could not start"
+);
+
 }
 
+
 miningStartedAt =
-  data.mining_started_at || null;
+data.mining_started_at || null;
+
 
 updateMiningUI();
 
-toast("⛏️ Mining started for 24 hours");
+
+toast(
+"⛏️ Mining started for 24 hours"
+);
+
 
 }catch(error){
 
 console.error(
-  "START MINING ERROR:",
-  error
+"START MINING ERROR:",
+error
 );
+
 
 toast(
-  error.message ||
-  "Mining could not start"
+error.message ||
+"Mining could not start"
 );
 
+
 if(button)
-  button.disabled = false;
+button.disabled =
+false;
 
 }
+
 }
+
 
 /* =========================================
 MINING BUTTON
@@ -1013,14 +1795,18 @@ function toggleMining(){
 
 if(miningStartedAt){
 
-toast("⛏️ Mining is already active");
+toast(
+"⛏️ Mining is already active"
+);
 
 return;
 
 }
 
 startMining();
+
 }
+
 
 /* =========================================
 OPEN MINE
@@ -1028,22 +1814,49 @@ OPEN MINE
 
 function openMine(){
 
-document.getElementById("taskScreen").style.display =
+document.getElementById(
+"taskScreen"
+).style.display =
 "none";
 
-document.getElementById("mineScreen").style.display =
+
+document.getElementById(
+"referralScreen"
+).style.display =
+"none";
+
+
+document.getElementById(
+"mineScreen"
+).style.display =
 "block";
 
-document.getElementById("mineNav").classList.add("active");
-document.getElementById("taskNav").classList.remove("active");
+
+document.getElementById(
+"mineNav"
+).classList.add("active");
+
+
+document.getElementById(
+"taskNav"
+).classList.remove("active");
+
+
+document.getElementById(
+"inviteNav"
+).classList.remove("active");
+
 
 window.scrollTo({
 top:0,
 behavior:"smooth"
 });
 
+
 checkMiningStatus(false);
+
 }
+
 
 /* =========================================
 OPEN TASKS
@@ -1051,20 +1864,96 @@ OPEN TASKS
 
 function openTasks(){
 
-document.getElementById("mineScreen").style.display =
+document.getElementById(
+"mineScreen"
+).style.display =
 "none";
 
-document.getElementById("taskScreen").style.display =
+
+document.getElementById(
+"referralScreen"
+).style.display =
+"none";
+
+
+document.getElementById(
+"taskScreen"
+).style.display =
 "block";
 
-document.getElementById("taskNav").classList.add("active");
-document.getElementById("mineNav").classList.remove("active");
+
+document.getElementById(
+"taskNav"
+).classList.add("active");
+
+
+document.getElementById(
+"mineNav"
+).classList.remove("active");
+
+
+document.getElementById(
+"inviteNav"
+).classList.remove("active");
+
 
 window.scrollTo({
 top:0,
 behavior:"smooth"
 });
+
 }
+
+
+/* =========================================
+OPEN REFERRALS
+========================================= */
+
+function openReferrals(){
+
+document.getElementById(
+"taskScreen"
+).style.display =
+"none";
+
+
+document.getElementById(
+"mineScreen"
+).style.display =
+"none";
+
+
+document.getElementById(
+"referralScreen"
+).style.display =
+"block";
+
+
+document.getElementById(
+"mineNav"
+).classList.remove("active");
+
+
+document.getElementById(
+"taskNav"
+).classList.remove("active");
+
+
+document.getElementById(
+"inviteNav"
+).classList.add("active");
+
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+
+loadReferralData();
+
+}
+
 
 /* =========================================
 FILTER TASKS
@@ -1078,33 +1967,38 @@ document
 btn.classList.remove("active");
 });
 
+
 if(button)
 button.classList.add("active");
+
 
 document
 .querySelectorAll(".task")
 .forEach(task=>{
 
-  const taskType =
-    task.dataset.type;
+const taskType =
+task.dataset.type;
 
-  if(
-    type === "all" ||
-    taskType === type
-  ){
 
-    task.style.display =
-      "flex";
+if(
+type === "all" ||
+taskType === type
+){
 
-  }else{
+task.style.display =
+"flex";
 
-    task.style.display =
-      "none";
-  }
+}else{
+
+task.style.display =
+"none";
+
+}
 
 });
 
 }
+
 
 /* =========================================
 OPEN SOCIAL TASK
@@ -1112,55 +2006,60 @@ OPEN SOCIAL TASK
 
 function openTask(button,id,url){
 
-if(button.disabled) return;
+if(button.disabled)
+return;
 
-/*
-First click opens the official link.
-Second click claims the reward.
-*/
 
 if(button.dataset.opened !== "yes"){
 
-button.dataset.opened = "yes";
-button.textContent = "CLAIM";
+button.dataset.opened =
+"yes";
+
+button.textContent =
+"CLAIM";
+
 
 try{
 
-  if(tg){
+if(tg){
 
-    tg.openLink(url);
+tg.openLink(url);
 
-  }else{
+}else{
 
-    window.open(
-      url,
-      "_blank"
-    );
-
-  }
-
-}catch(error){
-
-  window.open(
-    url,
-    "_blank"
-  );
+window.open(
+url,
+"_blank"
+);
 
 }
 
+}catch(error){
+
+window.open(
+url,
+"_blank"
+);
+
+}
+
+
 toast(
-  "Task opened. Come back and press CLAIM."
+"Task opened. Come back and press CLAIM."
 );
 
 return;
 
 }
 
+
 claimTask(
 button,
 id
 );
+
 }
+
 
 /* =========================================
 CLAIM TASK
@@ -1168,84 +2067,141 @@ CLAIM TASK
 
 async function claimTask(button,id){
 
-if(!requireTelegram()) return;
+if(!requireTelegram())
+return;
 
-if(button.disabled) return;
 
-button.disabled = true;
+if(button.disabled)
+return;
+
+
+button.disabled =
+true;
+
 
 try{
 
 const r =
-  await fetch(
-    API_BASE +
-    "/api/tasks/" +
-    encodeURIComponent(id) +
-    "/claim",
-    {
-      method:"POST",
-      headers:headers(),
-      body:JSON.stringify({})
-    }
-  );
+await fetch(
+API_BASE +
+"/api/tasks/" +
+encodeURIComponent(id) +
+"/claim",
+{
+method:"POST",
+headers:headers(),
+body:JSON.stringify({})
+}
+);
+
 
 const data =
-  await r.json();
+await r.json();
+
 
 if(!r.ok){
 
-  throw new Error(
-    data.error ||
-    "Task claim failed"
-  );
+throw new Error(
+data.error ||
+"Task claim failed"
+);
+
 }
 
+
 const reward =
-  Number(data.reward || 0);
+Number(data.reward || 0);
+
 
 if(userData){
 
-  userData.balance =
-    Number(userData.balance || 0) +
-    reward;
+userData.balance =
+Number(userData.balance || 0) +
+reward;
 
 }
 
-/*
-  Server balance is authoritative.
-  Reload account after reward.
-*/
 
 await loadUser();
 
+
 button.classList.add("done");
-button.textContent = "DONE";
-button.disabled = true;
+
+button.textContent =
+"DONE";
+
+button.disabled =
+true;
+
 
 toast(
-  "🎉 +" +
-  reward +
-  " BHM added"
+"🎉 +" +
+reward +
+" BHM added"
 );
 
+
 updateTaskCount();
+
 
 }catch(error){
 
 console.error(
-  "CLAIM TASK ERROR:",
-  error
+"CLAIM TASK ERROR:",
+error
 );
 
-button.disabled = false;
+
+button.disabled =
+false;
+
 
 toast(
-  error.message ||
-  "Task claim failed"
+error.message ||
+"Task claim failed"
 );
 
 }
+
 }
+
+
+/* =========================================
+REFERRAL LINK
+========================================= */
+
+function getReferralLink(){
+
+if(referralData &&
+referralData.referral_link){
+
+return referralData.referral_link;
+
+}
+
+
+/*
+IMPORTANT:
+Use Telegram ID, not username.
+Backend referral system expects ref_<telegram_id>.
+*/
+
+if(telegramUser?.id){
+
+return (
+"https://t.me/BharatMineBot?start=ref_" +
+encodeURIComponent(
+telegramUser.id
+)
+);
+
+}
+
+
+return "";
+
+}
+
 
 /* =========================================
 INVITE
@@ -1253,344 +2209,276 @@ INVITE
 
 function invite(){
 
-if(!requireTelegram()) return;
-
-let username =
-telegramUser?.username;
-
-/*
-Referral link.
-Telegram user can share it with friends.
-*/
-
-const ref =
-username ||
-telegramUser?.id ||
-"";
-
-const botLink =
-"https://t.me/BharatMineBot?start=ref_" +
-encodeURIComponent(ref);
-
-const shareText =
-"⛏️ Join me on BharatMine and start mining BHM!";
-
-const shareUrl =
-"https://t.me/share/url?url=" +
-encodeURIComponent(botLink) +
-"&text=" +
-encodeURIComponent(shareText);
-
-try{
-
-tg.openTelegramLink(shareUrl);
-
-}catch(error){
-
-window.open(
-  shareUrl,
-  "_blank"
-);
-
-}
-}
-
-/* =========================================
-DAILY STATUS
-========================================= */
-
-async function loadDailyStatus(){
-
-if(!requireTelegram()) return;
-
-try{
-
-const r =
-  await fetch(
-    API_BASE + "/api/daily",
-    {
-      method:"GET",
-      headers:headers(),
-      cache:"no-store"
-    }
-  );
-
-const data =
-  await r.json();
-
-if(!r.ok){
-  throw new Error(
-    data.error ||
-    "Daily status failed"
-  );
-}
-
-const button =
-  document.getElementById(
-    "dailyCodeButton"
-  );
-
-const input =
-  document.getElementById(
-    "dailyCodeInput"
-  );
-
-if(data.claimed){
-
-  button.textContent =
-    "DONE";
-
-  button.classList.add("done");
-  button.disabled = true;
-
-  input.disabled = true;
-
-}else{
-
-  button.textContent =
-    "CLAIM";
-
-  button.classList.remove("done");
-  button.disabled = false;
-
-  input.disabled = false;
-}
-
-}catch(error){
-
-console.error(
-  "DAILY STATUS ERROR:",
-  error
-);
-
-}
-}
-
-/* =========================================
-DAILY CODE CLAIM
-========================================= */
-
-async function claimDailyCode(){
-
-if(!requireTelegram()) return;
-
-const input =
-document.getElementById(
-"dailyCodeInput"
-);
-
-const button =
-document.getElementById(
-"dailyCodeButton"
-);
-
-const code =
-String(
-input.value || ""
-)
-.trim()
-.toUpperCase();
-
-if(!code){
-
-toast("Enter today's Daily Code");
-
+if(!requireTelegram())
 return;
 
+
+openReferrals();
+
 }
 
-button.disabled = true;
+
+/* =========================================
+LOAD REFERRALS
+========================================= */
+
+async function loadReferralData(){
+
+if(!requireTelegram())
+return;
+
 
 try{
 
 const r =
-  await fetch(
-    API_BASE + "/api/daily/claim",
-    {
-      method:"POST",
-      headers:headers(),
-      body:JSON.stringify({
-        code:code
-      })
-    }
-  );
+await fetch(
+API_BASE + "/api/referrals",
+{
+method:"GET",
+headers:headers(),
+cache:"no-store"
+}
+);
+
 
 const data =
-  await r.json();
+await r.json();
+
 
 if(!r.ok){
 
-  throw new Error(
-    data.error ||
-    "Daily code failed"
-  );
+throw new Error(
+data.error ||
+"Unable to load referrals"
+);
+
 }
 
-await loadUser();
 
-button.textContent =
-  "DONE";
+referralData =
+data;
 
-button.classList.add("done");
 
-input.disabled = true;
+renderReferralData();
 
-toast(
-  "🎁 +" +
-  Number(data.reward || 2) +
-  " BHM added"
-);
 
 }catch(error){
 
 console.error(
-  "DAILY CLAIM ERROR:",
-  error
+"REFERRAL ERROR:",
+error
 );
 
-button.disabled = false;
 
 toast(
-  error.message ||
-  "Invalid daily code"
+error.message ||
+"Unable to load referrals"
 );
 
 }
+
 }
 
+
 /* =========================================
-TASK COUNT
+RENDER REFERRALS
 ========================================= */
 
-function updateTaskCount(){
+function renderReferralData(){
 
-const ids = [
-"instagram",
-"youtube",
-"bot",
-"invite3",
-"game1",
-"level5",
-"daily"
-];
+if(!referralData)
+return;
 
-let completed = 0;
 
-ids.forEach(id=>{
+const count =
+Number(
+referralData.count || 0
+);
 
-const task =
-  document.querySelector(
-    '.task[data-id="' + id + '"]'
-  );
 
-if(!task) return;
+const link =
+referralData.referral_link ||
+getReferralLink();
 
-const button =
-  task.querySelector(".action");
 
-if(
-  button &&
-  button.disabled &&
-  button.textContent === "DONE"
-){
+document.getElementById(
+"referralCount"
+).textContent =
+count;
 
-  completed++;
+
+document.getElementById(
+"referralLink"
+).textContent =
+link || "Unable to create referral link";
+
+
+/*
+Calculate base referral earnings.
+Each genuine referral = 5 BHM.
+Milestone rewards are added separately below.
+*/
+
+let baseEarned =
+count * 5;
+
+
+let milestoneEarned = 0;
+
+
+if(Array.isArray(
+referralData.milestones
+)){
+
+referralData.milestones.forEach(m=>{
+
+if(count >= Number(m.count)){
+
+milestoneEarned +=
+Number(m.reward || 0);
 
 }
 
 });
 
-document.getElementById("count").textContent =
-completed + "/7 completed";
 }
+
+
+const totalEarned =
+baseEarned +
+milestoneEarned;
+
+
+document.getElementById(
+"referralEarned"
+).textContent =
+totalEarned.toFixed(2);
+
 
 /* =========================================
-PERIODIC MINING CHECK
+NEXT MILESTONE
 ========================================= */
 
-function startMiningPolling(){
+let next = null;
 
-clearInterval(
-miningPollInterval
+
+if(Array.isArray(
+referralData.milestones
+)){
+
+next =
+referralData.milestones.find(
+m =>
+count <
+Number(m.count)
 );
 
-miningPollInterval =
-setInterval(
-()=>{
-checkMiningStatus(false);
-},
-15000
-);
 }
+
+
+const nextElement =
+document.getElementById(
+"nextMilestone"
+);
+
+
+if(next){
+
+nextElement.textContent =
+(next.count - count) +
+" more to " +
+next.count;
+
+}else{
+
+nextElement.textContent =
+"All milestones reached";
+
+}
+
 
 /* =========================================
-PAGE VISIBILITY
+MILESTONE LIST
 ========================================= */
 
-document.addEventListener(
-"visibilitychange",
-()=>{
-if(
-document.visibilityState === "visible"
-){
-
-  checkMiningStatus(true);
-
-}
-
-}
+const list =
+document.getElementById(
+"milestoneList"
 );
 
-/* =========================================
-DAILY INPUT
-========================================= */
 
-document.addEventListener(
-"DOMContentLoaded",
-()=>{
+list.innerHTML = "";
 
-const input =
-  document.getElementById(
-    "dailyCodeInput"
-  );
 
-if(input){
+if(Array.isArray(
+referralData.milestones
+)){
 
-  input.addEventListener(
-    "keydown",
-    event=>{
-      if(event.key === "Enter"){
-        claimDailyCode();
-      }
-    }
-  );
+referralData.milestones.forEach(m=>{
 
-}
+const target =
+Number(m.count);
 
-}
+const reward =
+Number(m.reward || 0);
+
+const progress =
+Math.min(
+100,
+(target > 0)
+? (count / target) * 100
+: 0
 );
 
-/* =========================================
-START APP
-========================================= */
 
-(async function(){
+const completed =
+count >= target;
 
-const telegramOK =
-initializeTelegram();
 
-if(!telegramOK){
-return;
+const row =
+document.createElement("div");
+
+row.className =
+"milestone";
+
+
+row.innerHTML = `
+
+<div class="milestone-top">
+
+<span>
+${completed ? "✅" : "🏆"}
+${target} Referrals
+</span>
+
+<span>
++${reward} BHM
+</span>
+
+</div>
+
+<div class="progress">
+
+<div
+class="progress-bar"
+style="width:${progress}%">
+</div>
+
+</div>
+
+`;
+
+
+list.appendChild(row);
+
+});
+
 }
 
-await loadUser();
 
-await checkMiningStatus(false);
+/* =========================================
+REFERRAL USER LIST
+========================================= */
 
-startMiningPolling();
-
-})();
-
-</script></body>
-
-</html>
+const referralList =
+document.get

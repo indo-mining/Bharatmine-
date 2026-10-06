@@ -1,3 +1,5 @@
+"use strict";
+
 require("dotenv").config();
 
 const express = require("express");
@@ -8,17 +10,70 @@ const path = require("path");
 
 const app = express();
 
-app.use(cors());
-app.use(express.json());
+/*
+=========================================================
+ BHARATMINE BACKEND
+ Telegram Mini App + Telegram Bot + Mining + Tasks
+=========================================================
+*/
+
+app.set("trust proxy", 1);
+
+app.use(
+  cors({
+    origin: true,
+    credentials: false
+  })
+);
+
+app.use(
+  express.json({
+    limit: "1mb"
+  })
+);
+
+/* =======================================================
+   DATABASE
+======================================================= */
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
+  ssl: process.env.DATABASE_URL
+    ? { rejectUnauthorized: false }
+    : undefined,
+
+  max: 5,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 10000
 });
 
-// =========================================
-// BHARATMINE ECONOMY
-// =========================================
+/* =======================================================
+   TELEGRAM CONFIG
+======================================================= */
+
+const TELEGRAM_BOT_TOKEN =
+  process.env.TELEGRAM_BOT_TOKEN || "";
+
+const MINI_APP_URL =
+  process.env.MINI_APP_URL ||
+  "https://indo-mining.github.io/Bharatmine-/";
+
+const TELEGRAM_WEBHOOK_URL =
+  process.env.TELEGRAM_WEBHOOK_URL ||
+  "https://bharatmine-6bg6.onrender.com";
+
+const TELEGRAM_WEBHOOK_SECRET =
+  process.env.TELEGRAM_WEBHOOK_SECRET ||
+  "";
+
+const TELEGRAM_API =
+  TELEGRAM_BOT_TOKEN
+    ? `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}`
+    : "";
+
+/* =======================================================
+   BHARATMINE ECONOMY
+======================================================= */
 
 const TASKS = {
   instagram: 2,
@@ -29,19 +84,16 @@ const TASKS = {
   level5: 10
 };
 
-// Mining rate
-// 0.001 BHM per minute
 const MINING_RATE_PER_MINUTE = 0.001;
 
-// Maximum mining session = 24 hours
-const MAX_MINING_SECONDS = 24 * 60 * 60;
+const MAX_MINING_SECONDS =
+  24 * 60 * 60;
 
-// Daily Code reward
 const DAILY_CODE_REWARD = 2;
 
-// =========================================
-// REFERRAL SYSTEM
-// =========================================
+/* =======================================================
+   REFERRAL SYSTEM
+======================================================= */
 
 const REFERRAL_BASE_REWARD = 5;
 
@@ -53,19 +105,24 @@ const REFERRAL_MILESTONES = [
   { count: 100, reward: 800 }
 ];
 
-// =========================================
-// TASK LINKS
-// =========================================
+/* =======================================================
+   TASK LINKS
+======================================================= */
 
 const TASK_LINKS = {
-  instagram: "https://www.instagram.com/bharatmine.in",
-  youtube: "https://youtube.com/@bharatmine-in",
-  bot: "https://t.me/BharatMineBot"
+  instagram:
+    "https://www.instagram.com/bharatmine.in",
+
+  youtube:
+    "https://youtube.com/@bharatmine-in",
+
+  bot:
+    "https://t.me/BharatMineBot"
 };
 
-// =========================================
-// DAILY CODE
-// =========================================
+/* =======================================================
+   INDIA DATE
+======================================================= */
 
 function getIndiaDate() {
   return new Intl.DateTimeFormat("en-CA", {
@@ -75,6 +132,10 @@ function getIndiaDate() {
     day: "2-digit"
   }).format(new Date());
 }
+
+/* =======================================================
+   DAILY CODE
+======================================================= */
 
 function getDailySecret() {
   return (
@@ -87,98 +148,147 @@ function generateDailyCode(date) {
   const secret = getDailySecret();
 
   if (!secret) {
-    throw new Error("Daily code secret missing");
+    throw new Error(
+      "Daily code secret missing"
+    );
   }
 
-  const hash = crypto
-    .createHmac("sha256", secret)
-    .update(`BharatMine-Daily-Code:${date}`)
-    .digest("hex")
-    .toUpperCase();
+  const hash =
+    crypto
+      .createHmac("sha256", secret)
+      .update(
+        `BharatMine-Daily-Code:${date}`
+      )
+      .digest("hex")
+      .toUpperCase();
 
   return `BHM-${hash.substring(0, 6)}`;
 }
 
-// =========================================
-// TELEGRAM MINI APP VERIFICATION
-// =========================================
+/* =======================================================
+   TELEGRAM MINI APP VERIFICATION
+======================================================= */
 
 function verify(initData) {
   if (!initData) {
-    throw new Error("Telegram init data missing");
+    throw new Error(
+      "Telegram init data missing"
+    );
   }
 
-  if (!process.env.TELEGRAM_BOT_TOKEN) {
-    throw new Error("Missing Telegram configuration");
+  if (!TELEGRAM_BOT_TOKEN) {
+    throw new Error(
+      "Missing Telegram configuration"
+    );
   }
 
-  const params = new URLSearchParams(initData);
+  const params =
+    new URLSearchParams(initData);
 
-  const receivedHash = params.get("hash");
+  const receivedHash =
+    params.get("hash");
 
   if (!receivedHash) {
-    throw new Error("Telegram hash missing");
+    throw new Error(
+      "Telegram hash missing"
+    );
   }
 
   params.delete("hash");
 
-  const dataCheckString = [...params.entries()]
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([key, value]) => `${key}=${value}`)
-    .join("\n");
+  const dataCheckString =
+    [...params.entries()]
+      .sort(([a], [b]) =>
+        a.localeCompare(b)
+      )
+      .map(
+        ([key, value]) =>
+          `${key}=${value}`
+      )
+      .join("\n");
 
-  const secretKey = crypto
-    .createHmac("sha256", "WebAppData")
-    .update(process.env.TELEGRAM_BOT_TOKEN)
-    .digest();
+  const secretKey =
+    crypto
+      .createHmac(
+        "sha256",
+        "WebAppData"
+      )
+      .update(TELEGRAM_BOT_TOKEN)
+      .digest();
 
-  const calculatedHash = crypto
-    .createHmac("sha256", secretKey)
-    .update(dataCheckString)
-    .digest("hex");
+  const calculatedHash =
+    crypto
+      .createHmac(
+        "sha256",
+        secretKey
+      )
+      .update(dataCheckString)
+      .digest("hex");
 
   if (
-    receivedHash.length !== calculatedHash.length ||
+    receivedHash.length !==
+      calculatedHash.length ||
     !crypto.timingSafeEqual(
       Buffer.from(receivedHash),
       Buffer.from(calculatedHash)
     )
   ) {
-    throw new Error("Invalid Telegram signature");
+    throw new Error(
+      "Invalid Telegram signature"
+    );
   }
 
-  const authDate = Number(params.get("auth_date"));
+  const authDate =
+    Number(params.get("auth_date"));
 
-  if (!authDate || !Number.isFinite(authDate)) {
-    throw new Error("Invalid Telegram auth date");
+  if (
+    !authDate ||
+    !Number.isFinite(authDate)
+  ) {
+    throw new Error(
+      "Invalid Telegram auth date"
+    );
   }
 
-  const age = Date.now() / 1000 - authDate;
+  const age =
+    Date.now() / 1000 - authDate;
 
   if (age > 86400) {
-    throw new Error("Expired Telegram data");
+    throw new Error(
+      "Expired Telegram data"
+    );
   }
 
   if (age < -60) {
-    throw new Error("Invalid Telegram auth date");
+    throw new Error(
+      "Invalid Telegram auth date"
+    );
   }
 
-  const userString = params.get("user");
+  const userString =
+    params.get("user");
 
   if (!userString) {
-    throw new Error("Telegram user missing");
+    throw new Error(
+      "Telegram user missing"
+    );
   }
 
   let user;
 
   try {
-    user = JSON.parse(userString);
+    user =
+      JSON.parse(userString);
   } catch {
-    throw new Error("Invalid Telegram user data");
+    throw new Error(
+      "Invalid Telegram user data"
+    );
   }
 
   if (!user.id) {
-    throw new Error("Telegram user ID missing");
+    throw new Error(
+      "Telegram user ID missing"
+    );
   }
 
   return {
@@ -187,9 +297,9 @@ function verify(initData) {
   };
 }
 
-// =========================================
-// REWARD FROM POOL
-// =========================================
+/* =======================================================
+   REWARD FROM POOL
+======================================================= */
 
 async function rewardFromPool(
   client,
@@ -199,19 +309,25 @@ async function rewardFromPool(
 ) {
   const reward = Number(amount);
 
-  if (!Number.isFinite(reward) || reward <= 0) {
-    throw new Error("Invalid reward");
+  if (
+    !Number.isFinite(reward) ||
+    reward <= 0
+  ) {
+    throw new Error(
+      "Invalid reward"
+    );
   }
 
-  const poolResult = await client.query(
-    `
-    SELECT remaining
-    FROM reward_pools
-    WHERE pool_name = $1
-    FOR UPDATE
-    `,
-    [poolName]
-  );
+  const poolResult =
+    await client.query(
+      `
+      SELECT remaining
+      FROM reward_pools
+      WHERE pool_name = $1
+      FOR UPDATE
+      `,
+      [poolName]
+    );
 
   if (!poolResult.rows.length) {
     throw new Error(
@@ -220,10 +336,14 @@ async function rewardFromPool(
   }
 
   const remaining =
-    Number(poolResult.rows[0].remaining);
+    Number(
+      poolResult.rows[0].remaining
+    );
 
   if (remaining < reward) {
-    throw new Error("Reward pool exhausted");
+    throw new Error(
+      "Reward pool exhausted"
+    );
   }
 
   await client.query(
@@ -247,20 +367,25 @@ async function rewardFromPool(
   );
 }
 
-// =========================================
-// AUTH + REFERRAL
-// =========================================
+/* =======================================================
+   AUTH + REFERRAL
+======================================================= */
 
 async function auth(req) {
   const initData =
-    req.headers["x-telegram-init-data"];
+    req.headers[
+      "x-telegram-init-data"
+    ];
 
-  const verified = verify(initData);
+  const verified =
+    verify(initData);
 
-  const user = verified.user;
-  const params = verified.params;
+  const user =
+    verified.user;
 
-  // Telegram Mini App start parameter
+  const params =
+    verified.params;
+
   const startParam =
     params.get("start_param") || "";
 
@@ -268,9 +393,10 @@ async function auth(req) {
     await pool.connect();
 
   try {
-    await client.query("BEGIN");
+    await client.query(
+      "BEGIN"
+    );
 
-    // Check whether user already exists
     const existing =
       await client.query(
         `
@@ -285,10 +411,6 @@ async function auth(req) {
     const isNewUser =
       existing.rowCount === 0;
 
-    // =====================================
-    // CREATE / UPDATE USER
-    // =====================================
-
     await client.query(
       `
       INSERT INTO users
@@ -298,16 +420,18 @@ async function auth(req) {
           first_name,
           last_seen_at
         )
-
       VALUES
         ($1, $2, $3, NOW())
 
       ON CONFLICT (telegram_id)
 
       DO UPDATE SET
-        username = EXCLUDED.username,
-        first_name = EXCLUDED.first_name,
-        last_seen_at = NOW()
+        username =
+          EXCLUDED.username,
+        first_name =
+          EXCLUDED.first_name,
+        last_seen_at =
+          NOW()
       `,
       [
         user.id,
@@ -316,35 +440,25 @@ async function auth(req) {
       ]
     );
 
-    // =====================================
-    // REFERRAL PROCESS
-    // ONLY NEW USERS
-    // =====================================
+    /*
+    =====================================================
+    REFERRAL
+    =====================================================
+    */
 
     if (
       isNewUser &&
-      startParam
+      startParam &&
+      startParam.startsWith("ref_")
     ) {
-      let inviterId = null;
-
-      // Expected format:
-      // ref_123456789
+      const inviterId =
+        startParam.substring(4);
 
       if (
-        startParam.startsWith("ref_")
-      ) {
-        inviterId =
-          startParam.substring(4);
-      }
-
-      // Validate inviter ID
-      if (
-        inviterId &&
         /^\d+$/.test(inviterId) &&
-        String(inviterId) !== String(user.id)
+        String(inviterId) !==
+          String(user.id)
       ) {
-
-        // Check inviter exists
         const inviter =
           await client.query(
             `
@@ -359,8 +473,6 @@ async function auth(req) {
         if (
           inviter.rowCount > 0
         ) {
-
-          // Save referral
           const referral =
             await client.query(
               `
@@ -369,7 +481,6 @@ async function auth(req) {
                   invited_id,
                   inviter_id
                 )
-
               VALUES
                 ($1, $2)
 
@@ -384,15 +495,15 @@ async function auth(req) {
               ]
             );
 
-          // =================================
-          // NEW REFERRAL SUCCESSFULLY CREATED
-          // =================================
-
           if (
             referral.rowCount > 0
           ) {
+            /*
+             IMPORTANT:
+             Referral reward requires a
+             'referrals' reward pool.
+            */
 
-            // Base reward
             await rewardFromPool(
               client,
               "referrals",
@@ -400,7 +511,6 @@ async function auth(req) {
               REFERRAL_BASE_REWARD
             );
 
-            // Count referrals
             const countResult =
               await client.query(
                 `
@@ -417,20 +527,18 @@ async function auth(req) {
                 countResult.rows[0].count
               );
 
-            // =================================
-            // MILESTONE REWARDS
-            // =================================
+            /*
+            Milestones
+            */
 
             for (
               const milestone
               of REFERRAL_MILESTONES
             ) {
-
               if (
                 referralCount >=
                 milestone.count
               ) {
-
                 const milestoneInsert =
                   await client.query(
                     `
@@ -440,7 +548,6 @@ async function auth(req) {
                         milestone,
                         reward
                       )
-
                     VALUES
                       ($1, $2, $3)
 
@@ -457,11 +564,10 @@ async function auth(req) {
                     ]
                   );
 
-                // Give milestone reward only once
                 if (
-                  milestoneInsert.rowCount > 0
+                  milestoneInsert.rowCount >
+                  0
                 ) {
-
                   await rewardFromPool(
                     client,
                     "referrals",
@@ -476,13 +582,17 @@ async function auth(req) {
       }
     }
 
-    await client.query("COMMIT");
+    await client.query(
+      "COMMIT"
+    );
 
     return user;
 
   } catch (error) {
 
-    await client.query("ROLLBACK");
+    await client.query(
+      "ROLLBACK"
+    );
 
     throw error;
 
@@ -492,46 +602,58 @@ async function auth(req) {
   }
 }
 
-// =========================================
-// AUTO COMPLETE MINING
-// =========================================
-// 24 hours complete hone par reward automatically
-// balance me add hota hai.
+/* =======================================================
+   MINING SETTLEMENT
+======================================================= */
 
-async function settleCompletedMining(userId) {
-  const client = await pool.connect();
+async function settleCompletedMining(
+  userId
+) {
+  const client =
+    await pool.connect();
 
   try {
-    await client.query("BEGIN");
-
-    const result = await client.query(
-      `
-      SELECT
-        balance,
-        mining_started_at
-      FROM users
-      WHERE telegram_id = $1
-      FOR UPDATE
-      `,
-      [userId]
+    await client.query(
+      "BEGIN"
     );
 
-    const dbUser = result.rows[0];
+    const result =
+      await client.query(
+        `
+        SELECT
+          balance,
+          mining_started_at
+        FROM users
+        WHERE telegram_id = $1
+        FOR UPDATE
+        `,
+        [userId]
+      );
+
+    const dbUser =
+      result.rows[0];
 
     if (!dbUser) {
-      throw new Error("User not found");
+      throw new Error(
+        "User not found"
+      );
     }
 
-    if (!dbUser.mining_started_at) {
-      await client.query("COMMIT");
+    if (
+      !dbUser.mining_started_at
+    ) {
+      await client.query(
+        "COMMIT"
+      );
 
       return {
         mining: false,
         completed: false,
         reward: 0,
-        balance: Number(
-          dbUser.balance || 0
-        )
+        balance:
+          Number(
+            dbUser.balance || 0
+          )
       };
     }
 
@@ -543,38 +665,40 @@ async function settleCompletedMining(userId) {
     const elapsedSeconds =
       Math.max(
         0,
-        (Date.now() - startedAt) / 1000
+        (Date.now() -
+          startedAt) /
+          1000
       );
 
-    // Still mining
     if (
       elapsedSeconds <
       MAX_MINING_SECONDS
     ) {
-      await client.query("COMMIT");
+      await client.query(
+        "COMMIT"
+      );
 
       return {
         mining: true,
         completed: false,
         reward: 0,
-        balance: Number(
-          dbUser.balance || 0
-        ),
+        balance:
+          Number(
+            dbUser.balance || 0
+          ),
         mining_started_at:
           dbUser.mining_started_at,
         elapsed_seconds:
-          Math.floor(elapsedSeconds),
+          Math.floor(
+            elapsedSeconds
+          ),
         remaining_seconds:
           Math.ceil(
             MAX_MINING_SECONDS -
-            elapsedSeconds
+              elapsedSeconds
           )
       };
     }
-
-    // =====================================
-    // 24 HOURS COMPLETE
-    // =====================================
 
     const reward =
       (MAX_MINING_SECONDS / 60) *
@@ -606,22 +730,28 @@ async function settleCompletedMining(userId) {
         [userId]
       );
 
-    await client.query("COMMIT");
+    await client.query(
+      "COMMIT"
+    );
 
     return {
       mining: false,
       completed: true,
-      reward: Number(
-        reward.toFixed(8)
-      ),
-      balance: Number(
-        updated.rows[0].balance || 0
-      )
+      reward:
+        Number(
+          reward.toFixed(8)
+        ),
+      balance:
+        Number(
+          updated.rows[0].balance || 0
+        )
     };
 
   } catch (error) {
 
-    await client.query("ROLLBACK");
+    await client.query(
+      "ROLLBACK"
+    );
 
     throw error;
 
@@ -631,169 +761,565 @@ async function settleCompletedMining(userId) {
   }
 }
 
-// =========================================
-// HEALTH
-// =========================================
+/* =======================================================
+   TELEGRAM BOT API
+======================================================= */
 
-app.get("/health", async (req, res) => {
-  try {
-
-    await pool.query("SELECT 1");
-
-    res.json({
-      ok: true,
-      service: "BharatMine"
-    });
-
-  } catch (error) {
-
-    console.error(
-      "HEALTH ERROR:",
-      error
+async function telegramApi(
+  method,
+  body = {}
+) {
+  if (!TELEGRAM_API) {
+    throw new Error(
+      "TELEGRAM_BOT_TOKEN is missing"
     );
-
-    res.status(500).json({
-      ok: false,
-      error: "Database error"
-    });
   }
-});
 
-// =========================================
-// USER DATA
-// =========================================
-
-app.get("/api/me", async (req, res) => {
-  try {
-
-    const user = await auth(req);
-
-    // Automatically settle completed mining
-    const mining =
-      await settleCompletedMining(user.id);
-
-    const result = await pool.query(
-      `
-      SELECT
-        telegram_id,
-        username,
-        first_name,
-        balance,
-        mining_started_at,
-        created_at,
-        last_seen_at
-      FROM users
-      WHERE telegram_id = $1
-      `,
-      [user.id]
+  const response =
+    await fetch(
+      `${TELEGRAM_API}/${method}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type":
+            "application/json"
+        },
+        body:
+          JSON.stringify(body)
+      }
     );
 
-    if (!result.rows[0]) {
-      return res.status(404).json({
-        error: "User not found"
-      });
-    }
+  const data =
+    await response.json();
 
-    // Normal claimed tasks
-    const claims = await pool.query(
-      `
-      SELECT task_id
-      FROM task_claims
-      WHERE telegram_id = $1
-      AND task_id NOT LIKE 'daily:%'
-      `,
-      [user.id]
+  if (!data.ok) {
+    throw new Error(
+      data.description ||
+        `Telegram API error: ${method}`
     );
+  }
 
-    // Today's daily claim
-    const today = getIndiaDate();
+  return data;
+}
 
-    const dailyClaim = await pool.query(
-      `
-      SELECT 1
-      FROM task_claims
-      WHERE telegram_id = $1
-      AND task_id = $2
-      LIMIT 1
-      `,
-      [
-        user.id,
-        `daily:${today}`
-      ]
-    );
+/* =======================================================
+   TELEGRAM /START
+======================================================= */
 
-    const claimedTasks =
-      claims.rows.map(
-        row => row.task_id
-      );
+async function handleTelegramStart(
+  message
+) {
+  if (!message || !message.chat) {
+    return;
+  }
 
-    if (dailyClaim.rowCount > 0) {
-      claimedTasks.push("daily");
-    }
+  const chatId =
+    message.chat.id;
 
-    // Referral count
-    const referralCountResult =
+  const telegramUser =
+    message.from || {};
+
+  const text =
+    String(message.text || "");
+
+  /*
+  /start
+  /start ref_123
+  */
+
+  const parts =
+    text.trim().split(/\s+/);
+
+  const startParameter =
+    parts.length > 1
+      ? parts[1]
+      : "";
+
+  /*
+  Register user in DB if possible.
+  This does NOT require Mini App initData.
+  */
+
+  if (telegramUser.id) {
+    try {
       await pool.query(
         `
-        SELECT COUNT(*)::INTEGER AS count
-        FROM referrals
-        WHERE inviter_id = $1
+        INSERT INTO users
+          (
+            telegram_id,
+            username,
+            first_name,
+            last_seen_at
+          )
+        VALUES
+          ($1, $2, $3, NOW())
+
+        ON CONFLICT (telegram_id)
+
+        DO UPDATE SET
+          username =
+            EXCLUDED.username,
+          first_name =
+            EXCLUDED.first_name,
+          last_seen_at =
+            NOW()
         `,
-        [user.id]
+        [
+          telegramUser.id,
+          telegramUser.username || null,
+          telegramUser.first_name || null
+        ]
       );
-
-    const referralCount =
-      Number(
-        referralCountResult.rows[0].count
+    } catch (error) {
+      console.error(
+        "TELEGRAM USER SAVE ERROR:",
+        error.message
       );
+    }
+  }
 
-    res.json({
-      ...result.rows[0],
+  /*
+  -------------------------------------------------------
+  MAIN MINI APP
+  -------------------------------------------------------
+  */
 
-      claimed_tasks:
-        claimedTasks,
+  const keyboard = {
+    inline_keyboard: [
+      [
+        {
+          text:
+            "⛏️ Open BharatMine",
+          web_app: {
+            url:
+              MINI_APP_URL
+          }
+        }
+      ]
+    ]
+  };
 
-      referrals: {
-        count: referralCount,
-        reward_per_referral:
-          REFERRAL_BASE_REWARD,
-        referral_link:
-          `https://t.me/BharatMineBot?start=ref_${user.id}`,
-        milestones:
-          REFERRAL_MILESTONES
-      },
+  let welcomeText =
+    "⛏️ BharatMine\n\n" +
+    "Welcome to BharatMine!\n" +
+    "Start mining BHM and complete tasks to earn rewards.\n\n" +
+    "Tap the button below to open BharatMine.";
 
-      mining_status: {
-        mining:
-          mining.mining,
+  /*
+  If this is a referral /start,
+  explain that the referral will be
+  processed when the Mini App opens.
+  */
 
-        completed:
-          mining.completed,
+  if (
+    startParameter &&
+    startParameter.startsWith("ref_")
+  ) {
+    welcomeText +=
+      "\n\n🎁 Referral link detected.";
+  }
 
-        reward:
-          mining.reward,
-
-        remaining_seconds:
-          mining.remaining_seconds || 0
+  try {
+    await telegramApi(
+      "sendMessage",
+      {
+        chat_id: chatId,
+        text: welcomeText,
+        reply_markup: keyboard
       }
-    });
+    );
+  } catch (error) {
+    console.error(
+      "TELEGRAM START ERROR:",
+      error.message
+    );
+  }
+}
+
+/* =======================================================
+   TELEGRAM WEBHOOK
+======================================================= */
+
+app.post(
+  "/telegram/webhook",
+  async (req, res) => {
+
+    /*
+    Respond quickly to Telegram.
+    */
+
+    res.sendStatus(200);
+
+    try {
+      /*
+      Optional webhook secret protection.
+      */
+
+      if (
+        TELEGRAM_WEBHOOK_SECRET
+      ) {
+        const receivedSecret =
+          req.headers[
+            "x-telegram-bot-api-secret-token"
+          ];
+
+        if (
+          receivedSecret !==
+          TELEGRAM_WEBHOOK_SECRET
+        ) {
+          console.error(
+            "Telegram webhook secret mismatch"
+          );
+
+          return;
+        }
+      }
+
+      const update =
+        req.body || {};
+
+      /*
+      Normal /start messages
+      */
+
+      if (
+        update.message &&
+        typeof update.message.text ===
+          "string" &&
+        /^\/start(?:\s|$)/i.test(
+          update.message.text
+        )
+      ) {
+        await handleTelegramStart(
+          update.message
+        );
+      }
+
+    } catch (error) {
+
+      console.error(
+        "TELEGRAM WEBHOOK ERROR:",
+        error
+      );
+    }
+  }
+);
+
+/* =======================================================
+   SET TELEGRAM WEBHOOK
+======================================================= */
+
+async function configureTelegramWebhook() {
+  if (!TELEGRAM_BOT_TOKEN) {
+    console.log(
+      "Telegram bot disabled: TELEGRAM_BOT_TOKEN not configured."
+    );
+    return;
+  }
+
+  const base =
+    TELEGRAM_WEBHOOK_URL.replace(
+      /\/+$/,
+      ""
+    );
+
+  const webhookUrl =
+    `${base}/telegram/webhook`;
+
+  try {
+
+    const body = {
+      url: webhookUrl
+    };
+
+    if (
+      TELEGRAM_WEBHOOK_SECRET
+    ) {
+      body.secret_token =
+        TELEGRAM_WEBHOOK_SECRET;
+    }
+
+    const result =
+      await telegramApi(
+        "setWebhook",
+        body
+      );
+
+    console.log(
+      "Telegram webhook configured:",
+      webhookUrl
+    );
+
+    console.log(
+      "Telegram webhook result:",
+      result.ok
+    );
 
   } catch (error) {
 
     console.error(
-      "ME ERROR:",
-      error
+      "TELEGRAM WEBHOOK SETUP ERROR:",
+      error.message
     );
-
-    res.status(401).json({
-      error: error.message
-    });
   }
-});
+}
 
-// =========================================
-// REFERRAL DETAILS
-// =========================================
+/* =======================================================
+   TELEGRAM BOT INFO
+======================================================= */
+
+app.get(
+  "/telegram/status",
+  async (req, res) => {
+
+    try {
+
+      if (!TELEGRAM_BOT_TOKEN) {
+        return res.status(503).json({
+          ok: false,
+          telegram:
+            false,
+          error:
+            "TELEGRAM_BOT_TOKEN missing"
+        });
+      }
+
+      const result =
+        await telegramApi(
+          "getMe"
+        );
+
+      res.json({
+        ok: true,
+        telegram: true,
+        bot: result.result
+      });
+
+    } catch (error) {
+
+      console.error(
+        "TELEGRAM STATUS ERROR:",
+        error.message
+      );
+
+      res.status(500).json({
+        ok: false,
+        telegram: false,
+        error:
+          error.message
+      });
+    }
+  }
+);
+
+/* =======================================================
+   HEALTH
+======================================================= */
+
+app.get(
+  "/health",
+  async (req, res) => {
+
+    try {
+
+      await pool.query(
+        "SELECT 1"
+      );
+
+      res.json({
+        ok: true,
+        service:
+          "BharatMine",
+        telegram:
+          Boolean(
+            TELEGRAM_BOT_TOKEN
+          ),
+        miniAppUrl:
+          MINI_APP_URL
+      });
+
+    } catch (error) {
+
+      console.error(
+        "HEALTH ERROR:",
+        error
+      );
+
+      res.status(500).json({
+        ok: false,
+        error:
+          "Database error"
+      });
+    }
+  }
+);
+
+/* =======================================================
+   USER DATA
+======================================================= */
+
+app.get(
+  "/api/me",
+  async (req, res) => {
+
+    try {
+
+      const user =
+        await auth(req);
+
+      const mining =
+        await settleCompletedMining(
+          user.id
+        );
+
+      const result =
+        await pool.query(
+          `
+          SELECT
+            telegram_id,
+            username,
+            first_name,
+            balance,
+            mining_started_at,
+            created_at,
+            last_seen_at
+          FROM users
+          WHERE telegram_id = $1
+          `,
+          [user.id]
+        );
+
+      if (!result.rows[0]) {
+        return res.status(404).json({
+          error:
+            "User not found"
+        });
+      }
+
+      const claims =
+        await pool.query(
+          `
+          SELECT task_id
+          FROM task_claims
+          WHERE telegram_id = $1
+          AND task_id NOT LIKE 'daily:%'
+          `,
+          [user.id]
+        );
+
+      const today =
+        getIndiaDate();
+
+      const dailyClaim =
+        await pool.query(
+          `
+          SELECT 1
+          FROM task_claims
+          WHERE telegram_id = $1
+          AND task_id = $2
+          LIMIT 1
+          `,
+          [
+            user.id,
+            `daily:${today}`
+          ]
+        );
+
+      const claimedTasks =
+        claims.rows.map(
+          row => row.task_id
+        );
+
+      if (
+        dailyClaim.rowCount > 0
+      ) {
+        claimedTasks.push(
+          "daily"
+        );
+      }
+
+      const referralCountResult =
+        await pool.query(
+          `
+          SELECT COUNT(*)::INTEGER AS count
+          FROM referrals
+          WHERE inviter_id = $1
+          `,
+          [user.id]
+        );
+
+      const referralCount =
+        Number(
+          referralCountResult.rows[0].count
+        );
+
+      res.json({
+        ...result.rows[0],
+
+        claimed_tasks:
+          claimedTasks,
+
+        referrals: {
+          count:
+            referralCount,
+
+          reward_per_referral:
+            REFERRAL_BASE_REWARD,
+
+          /*
+          startapp is the preferred
+          Mini App referral route.
+          */
+
+          referral_link:
+            `https://t.me/BharatMineBot?startapp=ref_${user.id}`,
+
+          /*
+          Old bot start link kept for
+          compatibility.
+          */
+
+          bot_referral_link:
+            `https://t.me/BharatMineBot?start=ref_${user.id}`,
+
+          milestones:
+            REFERRAL_MILESTONES
+        },
+
+        mining_status: {
+          mining:
+            mining.mining,
+
+          completed:
+            mining.completed,
+
+          reward:
+            mining.reward,
+
+          remaining_seconds:
+            mining.remaining_seconds ||
+            0
+        }
+      });
+
+    } catch (error) {
+
+      console.error(
+        "ME ERROR:",
+        error
+      );
+
+      res.status(401).json({
+        error:
+          error.message
+      });
+    }
+  }
+);
+
+/* =======================================================
+   REFERRALS
+======================================================= */
 
 app.get(
   "/api/referrals",
@@ -829,7 +1355,8 @@ app.get(
             r.created_at
           FROM referrals r
           LEFT JOIN users u
-            ON u.telegram_id = r.invited_id
+            ON u.telegram_id =
+              r.invited_id
           WHERE r.inviter_id = $1
           ORDER BY r.created_at DESC
           `,
@@ -838,7 +1365,8 @@ app.get(
 
       const nextMilestone =
         REFERRAL_MILESTONES.find(
-          item => count < item.count
+          item =>
+            count < item.count
         ) || null;
 
       res.json({
@@ -850,6 +1378,9 @@ app.get(
           REFERRAL_BASE_REWARD,
 
         referral_link:
+          `https://t.me/BharatMineBot?startapp=ref_${user.id}`,
+
+        bot_referral_link:
           `https://t.me/BharatMineBot?start=ref_${user.id}`,
 
         next_milestone:
@@ -877,9 +1408,9 @@ app.get(
   }
 );
 
-// =========================================
-// START MINING
-// =========================================
+/* =======================================================
+   START MINING
+======================================================= */
 
 app.post(
   "/api/mining/start",
@@ -887,17 +1418,15 @@ app.post(
 
     try {
 
-      const user = await auth(req);
+      const user =
+        await auth(req);
 
-      // Check old session
       const current =
         await settleCompletedMining(
           user.id
         );
 
-      // Already mining
       if (current.mining) {
-
         return res.json({
           ok: true,
           alreadyMining: true,
@@ -914,7 +1443,9 @@ app.post(
 
       try {
 
-        await client.query("BEGIN");
+        await client.query(
+          "BEGIN"
+        );
 
         const result =
           await client.query(
@@ -936,7 +1467,6 @@ app.post(
           );
         }
 
-        // Duplicate protection
         if (
           dbUser.mining_started_at
         ) {
@@ -958,7 +1488,8 @@ app.post(
           await client.query(
             `
             UPDATE users
-            SET mining_started_at = NOW()
+            SET mining_started_at =
+              NOW()
             WHERE telegram_id = $1
             RETURNING mining_started_at
             `,
@@ -1009,9 +1540,9 @@ app.post(
   }
 );
 
-// =========================================
-// MINING STATUS
-// =========================================
+/* =======================================================
+   MINING STATUS
+======================================================= */
 
 app.get(
   "/api/mining/status",
@@ -1019,7 +1550,8 @@ app.get(
 
     try {
 
-      const user = await auth(req);
+      const user =
+        await auth(req);
 
       const mining =
         await settleCompletedMining(
@@ -1042,13 +1574,16 @@ app.get(
           mining.balance,
 
         mining_started_at:
-          mining.mining_started_at || null,
+          mining.mining_started_at ||
+          null,
 
         elapsed_seconds:
-          mining.elapsed_seconds || 0,
+          mining.elapsed_seconds ||
+          0,
 
         remaining_seconds:
-          mining.remaining_seconds || 0,
+          mining.remaining_seconds ||
+          0,
 
         rate_per_minute:
           MINING_RATE_PER_MINUTE,
@@ -1072,9 +1607,9 @@ app.get(
   }
 );
 
-// =========================================
-// TASK LINKS
-// =========================================
+/* =======================================================
+   TASKS
+======================================================= */
 
 app.get(
   "/api/tasks",
@@ -1141,9 +1676,9 @@ app.get(
   }
 );
 
-// =========================================
-// CLAIM NORMAL TASK
-// =========================================
+/* =======================================================
+   CLAIM TASK
+======================================================= */
 
 app.post(
   "/api/tasks/:id/claim",
@@ -1151,13 +1686,15 @@ app.post(
 
     try {
 
-      const user = await auth(req);
+      const user =
+        await auth(req);
 
       const taskId =
         req.params.id;
 
-      if (taskId === "daily") {
-
+      if (
+        taskId === "daily"
+      ) {
         return res.status(400).json({
           error:
             "Daily task requires daily code"
@@ -1167,8 +1704,9 @@ app.post(
       const reward =
         TASKS[taskId];
 
-      if (reward === undefined) {
-
+      if (
+        reward === undefined
+      ) {
         return res.status(404).json({
           error:
             "Unknown task"
@@ -1216,7 +1754,10 @@ app.post(
         await client.query(
           `
           INSERT INTO task_claims
-            (telegram_id, task_id)
+            (
+              telegram_id,
+              task_id
+            )
           VALUES
             ($1, $2)
           `,
@@ -1251,7 +1792,6 @@ app.post(
         if (
           error.code === "23505"
         ) {
-
           return res.status(409).json({
             error:
               "Already claimed"
@@ -1280,9 +1820,9 @@ app.post(
   }
 );
 
-// =========================================
-// DAILY CODE STATUS
-// =========================================
+/* =======================================================
+   DAILY STATUS
+======================================================= */
 
 app.get(
   "/api/daily",
@@ -1334,9 +1874,9 @@ app.get(
   }
 );
 
-// =========================================
-// DAILY CODE CLAIM
-// =========================================
+/* =======================================================
+   DAILY CLAIM
+======================================================= */
 
 app.post(
   "/api/daily/claim",
@@ -1355,7 +1895,6 @@ app.post(
           .toUpperCase();
 
       if (!submittedCode) {
-
         return res.status(400).json({
           error:
             "Daily code required"
@@ -1369,9 +1908,9 @@ app.post(
         generateDailyCode(today);
 
       if (
-        submittedCode !== correctCode
+        submittedCode !==
+        correctCode
       ) {
-
         return res.status(400).json({
           error:
             "Invalid daily code"
@@ -1422,7 +1961,10 @@ app.post(
         await client.query(
           `
           INSERT INTO task_claims
-            (telegram_id, task_id)
+            (
+              telegram_id,
+              task_id
+            )
           VALUES
             ($1, $2)
           `,
@@ -1458,7 +2000,6 @@ app.post(
         if (
           error.code === "23505"
         ) {
-
           return res.status(409).json({
             error:
               "Already claimed"
@@ -1487,9 +2028,9 @@ app.post(
   }
 );
 
-// =========================================
-// REWARD POOL STATUS
-// =========================================
+/* =======================================================
+   ECONOMY POOLS
+======================================================= */
 
 app.get(
   "/api/economy/pools",
@@ -1528,9 +2069,9 @@ app.get(
   }
 );
 
-// =========================================
-// LEADERBOARD
-// =========================================
+/* =======================================================
+   LEADERBOARD
+======================================================= */
 
 app.get(
   "/api/leaderboard",
@@ -1570,65 +2111,123 @@ app.get(
   }
 );
 
-// =========================================
-// FRONTEND
-// =========================================
+/* =======================================================
+   FRONTEND
+======================================================= */
 
-app.use(express.static(__dirname));
+app.use(
+  express.static(__dirname)
+);
 
-// Frontend fallback
-app.use((req, res, next) => {
+app.use(
+  (req, res, next) => {
 
-  if (
-    req.method !== "GET" &&
-    req.method !== "HEAD"
-  ) {
-    return next();
-  }
+    if (
+      req.method !== "GET" &&
+      req.method !== "HEAD"
+    ) {
+      return next();
+    }
 
-  res.sendFile(
-    path.join(
-      __dirname,
-      "index.html"
-    ),
-    (err) => {
+    res.sendFile(
+      path.join(
+        __dirname,
+        "index.html"
+      ),
+      (err) => {
 
-      if (err) {
+        if (err) {
 
-        console.error(
-          "FRONTEND ERROR:",
-          err
-        );
+          console.error(
+            "FRONTEND ERROR:",
+            err
+          );
 
-        if (!res.headersSent) {
-
-          res.status(
-            err.statusCode || 500
-          ).json({
-            error:
-              "Frontend index.html not found"
-          });
+          if (
+            !res.headersSent
+          ) {
+            res.status(
+              err.statusCode || 500
+            ).json({
+              error:
+                "Frontend index.html not found"
+            });
+          }
         }
       }
-    }
-  );
-});
+    );
+  }
+);
 
-// =========================================
-// SERVER
-// =========================================
+/* =======================================================
+   SERVER
+======================================================= */
 
 const PORT =
-  process.env.PORT || 10000;
+  process.env.PORT ||
+  10000;
 
-app.listen(
-  PORT,
-  "0.0.0.0",
-  () => {
+const server =
+  app.listen(
+    PORT,
+    "0.0.0.0",
+    async () => {
 
-    console.log(
-      `BharatMine server running on port ${PORT}`
-    );
+      console.log(
+        `BharatMine server running on port ${PORT}`
+      );
 
+      await configureTelegramWebhook();
+    }
+  );
+
+/* =======================================================
+   GRACEFUL SHUTDOWN
+======================================================= */
+
+let shuttingDown = false;
+
+async function shutdown(
+  signal
+) {
+  if (shuttingDown) {
+    return;
   }
+
+  shuttingDown = true;
+
+  console.log(
+    `Received ${signal}. Shutting down...`
+  );
+
+  server.close(
+    async () => {
+
+      try {
+        await pool.end();
+      } catch (error) {
+        console.error(
+          "Pool shutdown error:",
+          error.message
+        );
+      }
+
+      process.exit(0);
+    }
+  );
+
+  setTimeout(
+    () => process.exit(1),
+    10000
+  ).unref();
+}
+
+process.on(
+  "SIGTERM",
+  () => shutdown("SIGTERM")
+);
+
+process.on(
+  "SIGINT",
+  () => shutdown("SIGINT")
 );

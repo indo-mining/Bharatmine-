@@ -63,13 +63,35 @@ const TELEGRAM_WEBHOOK_URL =
   "https://bharatmine-6bg6.onrender.com";
 
 const TELEGRAM_WEBHOOK_SECRET =
-  process.env.TELEGRAM_WEBHOOK_SECRET ||
-  "";
+  process.env.TELEGRAM_WEBHOOK_SECRET || "";
+
+const ADMIN_KEY =
+  process.env.ADMIN_KEY || "";
 
 const TELEGRAM_API =
   TELEGRAM_BOT_TOKEN
     ? `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}`
     : "";
+
+/* =======================================================
+   TELEGRAM DIRECT MINI APP LINK
+======================================================= */
+
+function telegramMiniAppLink(startParam = "") {
+  const base =
+    "https://t.me/BharatMineBot";
+
+  if (
+    startParam &&
+    String(startParam).trim()
+  ) {
+    return `${base}?startapp=${encodeURIComponent(
+      String(startParam).trim()
+    )}`;
+  }
+
+  return `${base}?startapp=home`;
+}
 
 /* =======================================================
    BHARATMINE ECONOMY
@@ -84,7 +106,13 @@ const TASKS = {
   level5: 10
 };
 
-const MINING_RATE_PER_MINUTE = 0.001;
+/*
+ IMPORTANT:
+ 0.01 BHM per minute
+ 24 hours = 14.4 BHM
+*/
+
+const MINING_RATE_PER_MINUTE = 0.01;
 
 const MAX_MINING_SECONDS =
   24 * 60 * 60;
@@ -117,7 +145,7 @@ const TASK_LINKS = {
     "https://youtube.com/@bharatmine-in",
 
   bot:
-    "https://t.me/BharatMineBot"
+    telegramMiniAppLink()
 };
 
 /* =======================================================
@@ -140,7 +168,8 @@ function getIndiaDate() {
 function getDailySecret() {
   return (
     process.env.DAILY_CODE_SECRET ||
-    process.env.TELEGRAM_BOT_TOKEN
+    process.env.TELEGRAM_BOT_TOKEN ||
+    ""
   );
 }
 
@@ -164,6 +193,95 @@ function generateDailyCode(date) {
 
   return `BHM-${hash.substring(0, 6)}`;
 }
+
+/* =======================================================
+   ADMIN AUTH
+======================================================= */
+
+function verifyAdmin(req) {
+  if (!ADMIN_KEY) {
+    throw new Error(
+      "ADMIN_KEY is not configured"
+    );
+  }
+
+  const receivedKey =
+    req.headers["x-admin-key"] ||
+    req.query.admin_key ||
+    "";
+
+  if (
+    !receivedKey ||
+    String(receivedKey) !==
+      String(ADMIN_KEY)
+  ) {
+    throw new Error(
+      "Invalid admin key"
+    );
+  }
+
+  return true;
+}
+
+/* =======================================================
+   ADMIN DAILY CODE
+=======================================================
+
+ GET:
+
+ /admin/daily-code
+
+ Header:
+
+ x-admin-key: YOUR_ADMIN_KEY
+
+ Or:
+
+ /admin/daily-code?admin_key=YOUR_ADMIN_KEY
+
+======================================================= */
+
+app.get(
+  "/admin/daily-code",
+  (req, res) => {
+
+    try {
+
+      verifyAdmin(req);
+
+      const date =
+        getIndiaDate();
+
+      const code =
+        generateDailyCode(date);
+
+      res.json({
+        ok: true,
+        app:
+          "BharatMine",
+        date,
+        code,
+        reward:
+          DAILY_CODE_REWARD,
+        timezone:
+          "Asia/Kolkata"
+      });
+
+    } catch (error) {
+
+      console.error(
+        "ADMIN DAILY CODE ERROR:",
+        error.message
+      );
+
+      res.status(403).json({
+        ok: false,
+        error:
+          error.message
+      });
+    }
+  }
+);
 
 /* =======================================================
    TELEGRAM MINI APP VERIFICATION
@@ -498,11 +616,6 @@ async function auth(req) {
           if (
             referral.rowCount > 0
           ) {
-            /*
-             IMPORTANT:
-             Referral reward requires a
-             'referrals' reward pool.
-            */
 
             await rewardFromPool(
               client,
@@ -526,10 +639,6 @@ async function auth(req) {
               Number(
                 countResult.rows[0].count
               );
-
-            /*
-            Milestones
-            */
 
             for (
               const milestone
@@ -700,6 +809,11 @@ async function settleCompletedMining(
       };
     }
 
+    /*
+    24 hours × 60 minutes × 0.01 BHM
+    = 14.4 BHM
+    */
+
     const reward =
       (MAX_MINING_SECONDS / 60) *
       MINING_RATE_PER_MINUTE;
@@ -822,11 +936,6 @@ async function handleTelegramStart(
   const text =
     String(message.text || "");
 
-  /*
-  /start
-  /start ref_123
-  */
-
   const parts =
     text.trim().split(/\s+/);
 
@@ -834,11 +943,6 @@ async function handleTelegramStart(
     parts.length > 1
       ? parts[1]
       : "";
-
-  /*
-  Register user in DB if possible.
-  This does NOT require Mini App initData.
-  */
 
   if (telegramUser.id) {
     try {
@@ -878,11 +982,18 @@ async function handleTelegramStart(
     }
   }
 
-  /*
-  -------------------------------------------------------
-  MAIN MINI APP
-  -------------------------------------------------------
-  */
+  let miniAppLink =
+    telegramMiniAppLink();
+
+  if (
+    startParameter &&
+    startParameter.startsWith("ref_")
+  ) {
+    miniAppLink =
+      telegramMiniAppLink(
+        startParameter
+      );
+  }
 
   const keyboard = {
     inline_keyboard: [
@@ -890,10 +1001,8 @@ async function handleTelegramStart(
         {
           text:
             "⛏️ Open BharatMine",
-          web_app: {
-            url:
-              MINI_APP_URL
-          }
+          url:
+            miniAppLink
         }
       ]
     ]
@@ -904,12 +1013,6 @@ async function handleTelegramStart(
     "Welcome to BharatMine!\n" +
     "Start mining BHM and complete tasks to earn rewards.\n\n" +
     "Tap the button below to open BharatMine.";
-
-  /*
-  If this is a referral /start,
-  explain that the referral will be
-  processed when the Mini App opens.
-  */
 
   if (
     startParameter &&
@@ -944,16 +1047,9 @@ app.post(
   "/telegram/webhook",
   async (req, res) => {
 
-    /*
-    Respond quickly to Telegram.
-    */
-
     res.sendStatus(200);
 
     try {
-      /*
-      Optional webhook secret protection.
-      */
 
       if (
         TELEGRAM_WEBHOOK_SECRET
@@ -977,10 +1073,6 @@ app.post(
 
       const update =
         req.body || {};
-
-      /*
-      Normal /start messages
-      */
 
       if (
         update.message &&
@@ -1077,8 +1169,7 @@ app.get(
       if (!TELEGRAM_BOT_TOKEN) {
         return res.status(503).json({
           ok: false,
-          telegram:
-            false,
+          telegram: false,
           error:
             "TELEGRAM_BOT_TOKEN missing"
         });
@@ -1092,7 +1183,11 @@ app.get(
       res.json({
         ok: true,
         telegram: true,
-        bot: result.result
+        bot: result.result,
+        mini_app_url:
+          MINI_APP_URL,
+        direct_mini_app:
+          telegramMiniAppLink()
       });
 
     } catch (error) {
@@ -1135,7 +1230,32 @@ app.get(
             TELEGRAM_BOT_TOKEN
           ),
         miniAppUrl:
-          MINI_APP_URL
+          MINI_APP_URL,
+        directMiniApp:
+          telegramMiniAppLink(),
+
+        mining: {
+          rate_per_minute:
+            MINING_RATE_PER_MINUTE,
+          daily_max:
+            Number(
+              (
+                (MAX_MINING_SECONDS / 60) *
+                MINING_RATE_PER_MINUTE
+              ).toFixed(8)
+            )
+        },
+
+        daily_code: {
+          enabled:
+            Boolean(
+              getDailySecret()
+            ),
+          reward:
+            DAILY_CODE_REWARD,
+          timezone:
+            "Asia/Kolkata"
+        }
       });
 
     } catch (error) {
@@ -1266,18 +1386,10 @@ app.get(
           reward_per_referral:
             REFERRAL_BASE_REWARD,
 
-          /*
-          startapp is the preferred
-          Mini App referral route.
-          */
-
           referral_link:
-            `https://t.me/BharatMineBot?startapp=ref_${user.id}`,
-
-          /*
-          Old bot start link kept for
-          compatibility.
-          */
+            telegramMiniAppLink(
+              `ref_${user.id}`
+            ),
 
           bot_referral_link:
             `https://t.me/BharatMineBot?start=ref_${user.id}`,
@@ -1378,7 +1490,9 @@ app.get(
           REFERRAL_BASE_REWARD,
 
         referral_link:
-          `https://t.me/BharatMineBot?startapp=ref_${user.id}`,
+          telegramMiniAppLink(
+            `ref_${user.id}`
+          ),
 
         bot_referral_link:
           `https://t.me/BharatMineBot?start=ref_${user.id}`,
@@ -1509,7 +1623,15 @@ app.post(
           rate_per_minute:
             MINING_RATE_PER_MINUTE,
           duration_seconds:
-            MAX_MINING_SECONDS
+            MAX_MINING_SECONDS,
+
+          reward_after_24h:
+            Number(
+              (
+                (MAX_MINING_SECONDS / 60) *
+                MINING_RATE_PER_MINUTE
+              ).toFixed(8)
+            )
         });
 
       } catch (error) {
@@ -1589,7 +1711,15 @@ app.get(
           MINING_RATE_PER_MINUTE,
 
         duration_seconds:
-          MAX_MINING_SECONDS
+          MAX_MINING_SECONDS,
+
+        reward_after_24h:
+          Number(
+            (
+              (MAX_MINING_SECONDS / 60) *
+              MINING_RATE_PER_MINUTE
+            ).toFixed(8)
+          )
       });
 
     } catch (error) {
@@ -1637,7 +1767,7 @@ app.get(
 
       bot: {
         title:
-          "Start BharatMine Bot",
+          "Open BharatMine",
         url:
           TASK_LINKS.bot,
         reward:

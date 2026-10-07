@@ -1,49 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
 
 <meta
   name="viewport"
-  content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
->
+  content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 
 <title>BharatMine</title>
 
-<!-- Telegram Mini App SDK -->
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
+
 *{
-  box-sizing:border-box;
+  box-sizing:border-box
 }
 
-html,
 body{
   margin:0;
-  padding:0;
   background:#07110d;
   color:#f4fff8;
-  font-family:Arial,system-ui,sans-serif;
-}
-
-body{
-  min-height:100vh;
-}
-
-button{
-  font-family:inherit;
-  cursor:pointer;
-}
-
-button:disabled{
-  cursor:not-allowed;
+  font-family:Arial,system-ui,sans-serif
 }
 
 .app{
   max-width:560px;
   margin:auto;
-  padding-bottom:90px;
+  padding-bottom:90px
 }
 
 .header{
@@ -55,14 +41,13 @@ button:disabled{
   position:sticky;
   top:0;
   z-index:5;
-  border-bottom:1px solid #183126;
+  border-bottom:1px solid #183126
 }
 
 .brand{
   display:flex;
   align-items:center;
-  gap:10px;
-  min-width:0;
+  gap:10px
 }
 
 .logo{
@@ -73,22 +58,17 @@ button:disabled{
   display:grid;
   place-items:center;
   font-size:25px;
-  font-weight:900;
-  flex:none;
+  font-weight:900
 }
 
 .brand b{
-  font-size:19px;
+  font-size:19px
 }
 
 .brand small{
   display:block;
   color:#89a99a;
-  margin-top:3px;
-  max-width:150px;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
+  margin-top:3px
 }
 
 .balance{
@@ -96,34 +76,33 @@ button:disabled{
   border:1px solid #214333;
   border-radius:12px;
   padding:8px 11px;
-  text-align:right;
-  flex:none;
+  text-align:right
 }
 
 .balance small{
-  color:#91a99d;
+  color:#91a99d
 }
 
 .balance b{
   display:block;
-  color:#50e696;
+  color:#50e696
 }
 
 .hero{
   padding:18px 16px 14px;
-  background:linear-gradient(150deg,#123c27,#0a1811);
+  background:linear-gradient(150deg,#123c27,#0a1811)
 }
 
 .hero h1{
   margin:0 0 6px;
-  font-size:27px;
+  font-size:27px
 }
 
 .hero p{
   margin:0;
   color:#aac0b5;
   font-size:13px;
-  line-height:1.45;
+  line-height:1.45
 }
 
 .tabs{
@@ -131,7 +110,7 @@ button:disabled{
   gap:8px;
   padding:13px 16px;
   overflow:auto;
-  background:#09150f;
+  background:#09150f
 }
 
 .tabs button{
@@ -141,155 +120,141 @@ button:disabled{
   color:#9db4a7;
   padding:9px 14px;
   border-radius:999px;
-  font-weight:700;
+  font-weight:700
 }
 
 .tabs .active{
   background:#39d98a;
   color:#04150c;
-  border-color:#39d98a;
+  border-color:#39d98a
 }
 
 .section{
-  padding:0 16px;
+  padding:0 16px
 }
 
 .section-title{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin:15px 0 10px;
+  margin:8px 0 10px
 }
 
 .section-title h2{
-  font-size:16px;
-  margin:0;
+  font-size:15px;
+  margin:0
 }
 
 .section-title span{
-  font-size:11px;
-  color:#8fa79b;
+  font-size:10px;
+  color:#718b7e
 }
 
 .task{
   display:flex;
   align-items:center;
   gap:11px;
-  background:#0e1d16;
-  border:1px solid #1b3528;
+  background:#0d1b15;
+  border:1px solid #1d3629;
   border-radius:15px;
   padding:12px;
-  margin-bottom:9px;
-}
-
-.task.hidden{
-  display:none !important;
+  margin-bottom:9px
 }
 
 .icon{
-  width:43px;
-  height:43px;
+  width:40px;
+  height:40px;
   border-radius:12px;
-  background:#183426;
+  background:#13291e;
   display:grid;
   place-items:center;
   font-size:21px;
-  flex:none;
+  flex:none
 }
 
 .info{
-  flex:1;
   min-width:0;
+  flex:1
 }
 
 .info b{
-  font-size:13px;
+  display:block;
+  font-size:12px;
+  margin-bottom:4px
 }
 
 .info small{
   display:block;
-  color:#879f92;
-  margin-top:4px;
-  font-size:10px;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
+  color:#718b7e;
+  font-size:9px;
+  line-height:1.4
 }
 
 .reward{
-  color:#53e79a;
-  font-size:11px;
-  font-weight:800;
   margin-top:5px;
+  color:#53e79a;
+  font-size:10px;
+  font-weight:800
 }
 
 .action{
   border:0;
-  background:#2bc578;
-  color:#03150c;
+  background:#39d98a;
+  color:#04150c;
+  padding:8px 10px;
+  border-radius:9px;
+  font-size:9px;
   font-weight:900;
-  font-size:11px;
-  padding:9px 11px;
-  border-radius:10px;
-  flex:none;
-}
-
-.action:disabled{
-  opacity:.8;
+  flex:none
 }
 
 .action.done{
-  background:#1c2c24;
-  color:#70877b;
+  background:#1b3025;
+  color:#70877b
 }
 
-/* DAILY */
-
 .daily-code-box{
-  margin-top:8px;
   display:flex;
   gap:7px;
+  margin-top:8px
 }
 
 .daily-code-input{
   flex:1;
   min-width:0;
-  background:#08140e;
-  color:#f4fff8;
-  border:1px solid #28513c;
-  border-radius:10px;
-  padding:10px;
-  font-size:12px;
+  background:#07110d;
+  border:1px solid #294737;
+  color:#effff6;
+  border-radius:9px;
+  padding:9px;
   outline:none;
-  text-transform:uppercase;
+  font-size:11px
 }
 
 .daily-code-button{
   border:0;
   background:#39d98a;
   color:#04150c;
-  font-weight:900;
-  border-radius:10px;
-  padding:0 13px;
-  font-size:11px;
+  border-radius:9px;
+  padding:0 12px;
+  font-size:9px;
+  font-weight:900
 }
 
 .daily-code-button.done{
   background:#1c2c24;
-  color:#70877b;
+  color:#70877b
 }
 
 .daily-note{
   color:#718b7e;
   font-size:9px;
-  margin-top:6px;
+  margin-top:6px
 }
-
-/* MINING */
 
 .mine-screen{
   display:none;
-  padding:20px 16px;
+  padding:20px 16px
 }
 
 .mine-card{
@@ -297,22 +262,22 @@ button:disabled{
   border:1px solid #244636;
   border-radius:22px;
   padding:24px;
-  text-align:center;
+  text-align:center
 }
 
 .mine-icon{
   font-size:65px;
-  margin-bottom:8px;
+  margin-bottom:8px
 }
 
 .mine-card h1{
   margin:5px 0;
-  font-size:25px;
+  font-size:25px
 }
 
 .mine-card p{
   color:#91aaa0;
-  font-size:12px;
+  font-size:12px
 }
 
 .timer{
@@ -320,14 +285,13 @@ button:disabled{
   font-weight:900;
   color:#53e79a;
   margin:22px 0 8px;
-  letter-spacing:2px;
+  letter-spacing:2px
 }
 
 .mining-status{
   font-size:12px;
   color:#9ab2a6;
-  margin-bottom:18px;
-  min-height:16px;
+  margin-bottom:18px
 }
 
 .mine-btn{
@@ -338,254 +302,120 @@ button:disabled{
   font-size:15px;
   font-weight:900;
   background:#39d98a;
-  color:#04150c;
+  color:#04150c
 }
 
-.mine-btn:disabled{
-  opacity:.75;
+.mine-btn.stop{
+  background:#d65c5c;
+  color:white
 }
 
-.mine-btn.active{
-  background:#1c2c24;
-  color:#53e79a;
+.mine-btn.claim{
+  background:#39d98a;
+  color:#04150c
 }
 
 .rate{
   margin-top:16px;
   color:#91aaa0;
-  font-size:11px;
+  font-size:11px
 }
 
-/* REFERRAL */
 
-.referral-screen{
+/* WALLET */
+
+.wallet-screen{
   display:none;
-  padding:18px 16px;
+  padding:20px 16px 90px
 }
 
-.referral-hero{
+.wallet-card{
   background:linear-gradient(145deg,#123c27,#0d1d15);
   border:1px solid #244636;
   border-radius:22px;
-  padding:22px 18px;
-  text-align:center;
+  padding:22px
 }
 
-.referral-icon{
-  font-size:52px;
-  margin-bottom:5px;
+.wallet-card h1{
+  margin:0 0 7px;
+  font-size:24px
 }
 
-.referral-hero h1{
-  margin:5px 0;
-  font-size:25px;
-}
-
-.referral-hero p{
-  margin:7px 0 0;
-  font-size:12px;
+.wallet-card p{
   color:#91aaa0;
-  line-height:1.5;
-}
-
-.referral-stats{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:9px;
-  margin-top:12px;
-}
-
-.referral-stat{
-  background:#0e1d16;
-  border:1px solid #1b3528;
-  border-radius:15px;
-  padding:15px 10px;
-  text-align:center;
-}
-
-.referral-stat b{
-  display:block;
-  font-size:22px;
-  color:#53e79a;
-}
-
-.referral-stat small{
-  display:block;
-  color:#879f92;
-  font-size:10px;
-  margin-top:4px;
-}
-
-.referral-link-box{
-  margin-top:12px;
-  background:#0e1d16;
-  border:1px solid #1b3528;
-  border-radius:15px;
-  padding:14px;
-}
-
-.referral-link-box b{
-  font-size:13px;
-}
-
-.referral-link{
-  margin-top:9px;
-  background:#08140e;
-  border:1px solid #28513c;
-  border-radius:10px;
-  padding:10px;
-  font-size:10px;
-  color:#a9c5b7;
-  word-break:break-all;
-  line-height:1.4;
-}
-
-.referral-actions{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-  margin-top:9px;
-}
-
-.referral-btn{
-  border:0;
-  border-radius:10px;
-  padding:11px 8px;
-  font-size:11px;
-  font-weight:900;
-}
-
-.copy-btn{
-  background:#39d98a;
-  color:#04150c;
-}
-
-.share-btn{
-  background:#183426;
-  color:#53e79a;
-  border:1px solid #28513c;
-}
-
-.milestone-box{
-  margin-top:12px;
-  background:#0e1d16;
-  border:1px solid #1b3528;
-  border-radius:15px;
-  padding:15px;
-}
-
-.milestone-title{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:13px;
-}
-
-.milestone-title b{
-  font-size:13px;
-}
-
-.milestone-title span{
-  font-size:10px;
-  color:#879f92;
-}
-
-.milestone{
-  margin-bottom:13px;
-}
-
-.milestone:last-child{
-  margin-bottom:0;
-}
-
-.milestone-top{
-  display:flex;
-  justify-content:space-between;
-  font-size:10px;
-  margin-bottom:6px;
-}
-
-.milestone-top span:first-child{
-  color:#d6e9df;
-}
-
-.milestone-top span:last-child{
-  color:#53e79a;
-  font-weight:800;
-}
-
-.progress{
-  height:7px;
-  background:#182a21;
-  border-radius:99px;
-  overflow:hidden;
-}
-
-.progress-bar{
-  height:100%;
-  width:0%;
-  background:#39d98a;
-  border-radius:99px;
-  transition:.3s;
-}
-
-.referral-note{
-  margin-top:12px;
-  text-align:center;
-  font-size:9px;
-  color:#718b7e;
-  line-height:1.5;
-}
-
-.referral-list{
-  margin-top:12px;
-}
-
-.referral-user{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  background:#0e1d16;
-  border:1px solid #1b3528;
-  border-radius:13px;
-  padding:11px;
-  margin-bottom:7px;
-}
-
-.referral-avatar{
-  width:36px;
-  height:36px;
-  border-radius:11px;
-  background:#183426;
-  display:grid;
-  place-items:center;
-}
-
-.referral-user-info{
-  flex:1;
-  min-width:0;
-}
-
-.referral-user-info b{
   font-size:12px;
-  display:block;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
+  line-height:1.5
 }
 
-.referral-user-info small{
-  font-size:9px;
+.wallet-status{
+  margin:16px 0;
+  padding:14px;
+  border:1px solid #244636;
+  border-radius:14px;
+  background:#0a1711
+}
+
+.wallet-label{
   color:#718b7e;
-}
-
-.referral-earned{
   font-size:10px;
-  color:#53e79a;
-  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.7px
 }
 
-/* BOTTOM */
+.wallet-address{
+  font-size:13px;
+  font-weight:800;
+  word-break:break-all;
+  margin-top:5px
+}
+
+.wallet-network{
+  font-size:11px;
+  color:#8fa99c;
+  margin-top:6px
+}
+
+.wallet-btn{
+  width:100%;
+  border:0;
+  border-radius:13px;
+  padding:14px;
+  margin-top:10px;
+  font-size:14px;
+  font-weight:900;
+  background:#39d98a;
+  color:#04150c
+}
+
+.wallet-btn.secondary{
+  background:#172a20;
+  color:#b7d5c7;
+  border:1px solid #294b39
+}
+
+.wallet-btn.danger{
+  background:#3a1d1d;
+  color:#ffb0b0
+}
+
+.wallet-help{
+  margin-top:13px;
+  color:#718b7e;
+  font-size:10px;
+  line-height:1.5
+}
+
+.wallet-verified{
+  display:inline-block;
+  margin-top:8px;
+  padding:4px 8px;
+  border-radius:8px;
+  background:#123e29;
+  color:#53e79a;
+  font-size:10px;
+  font-weight:800
+}
+
 
 .bottom{
   position:fixed;
@@ -600,7 +430,7 @@ button:disabled{
   display:grid;
   grid-template-columns:repeat(4,1fr);
   padding:6px;
-  z-index:10;
+  z-index:10
 }
 
 .bottom button{
@@ -608,21 +438,19 @@ button:disabled{
   background:transparent;
   color:#718b7e;
   padding:6px;
-  font-size:10px;
+  font-size:10px
 }
 
 .bottom .active{
-  color:#46e293;
+  color:#46e293
 }
 
 .bottom i{
   display:block;
   font-style:normal;
   font-size:18px;
-  margin-bottom:2px;
+  margin-bottom:2px
 }
-
-/* TOAST */
 
 .toast{
   position:fixed;
@@ -636,72 +464,74 @@ button:disabled{
   font-weight:800;
   font-size:12px;
   transition:.25s;
-  z-index:99999;
+  z-index:20;
+  white-space:nowrap;
   max-width:90%;
   overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
+  text-overflow:ellipsis
 }
 
 .toast.show{
-  transform:translate(-50%,0);
+  transform:translate(-50%,0)
 }
 
-/* AUTH WARNING */
-
-.auth-warning{
-  display:none;
-  margin:12px 16px 0;
-  padding:12px;
-  border-radius:12px;
-  background:#2a2110;
-  border:1px solid #624c1c;
-  color:#f2d98b;
-  font-size:11px;
-  line-height:1.45;
-}
 </style>
+
 </head>
+
 
 <body>
 
 <div id="toast" class="toast"></div>
 
-<div id="authWarning" class="auth-warning">
-  Open BharatMine from the <b>@BharatMineBot</b> Telegram Mini App.
-  Direct browser opening does not provide Telegram authentication data.
-</div>
-
 <div class="app">
+
 
 <header class="header">
 
   <div class="brand">
 
-    <div class="logo">B</div>
+    <div class="logo">
+      B
+    </div>
 
     <div>
       <b>BharatMine</b>
-      <small id="user">Telegram Miner</small>
+      <small id="user">
+        Telegram Miner
+      </small>
     </div>
 
   </div>
 
+
   <div class="balance">
-    <small>Balance</small>
-    <b><span id="bal">0.00</span> BHM</b>
+
+    <small>
+      Balance
+    </small>
+
+    <b>
+      <span id="bal">
+        0.00
+      </span>
+      BHM
+    </b>
+
   </div>
 
 </header>
 
 
-<!-- TASK SCREEN -->
+<!-- ================= TASK SCREEN ================= -->
 
 <div id="taskScreen">
 
 <section class="hero">
 
-  <h1>🎯 Earn BHM</h1>
+  <h1>
+    🎯 Earn BHM
+  </h1>
 
   <p>
     Complete tasks, check the daily code and earn BharatMine rewards.
@@ -709,72 +539,44 @@ button:disabled{
 
 </section>
 
+
 <div class="tabs">
 
-  <button
-    class="active"
-    onclick="filterTasks('all',this)"
-  >
-    All Tasks
-  </button>
+<button
+  class="active"
+  onclick="filterTasks('all',this)">
+  All Tasks
+</button>
 
-  <button onclick="filterTasks('social',this)">
-    Social
-  </button>
+<button
+  onclick="filterTasks('social',this)">
+  Social
+</button>
 
-  <button onclick="filterTasks('games',this)">
-    Games
-  </button>
+<button
+  onclick="filterTasks('games',this)">
+  Games
+</button>
 
-  <button onclick="filterTasks('daily',this)">
-    Daily
-  </button>
+<button
+  onclick="filterTasks('daily',this)">
+  Daily
+</button>
 
 </div>
+
 
 <section class="section">
 
 <div class="section-title">
 
-  <h2>📋 Available Tasks</h2>
+  <h2>
+    Tasks
+  </h2>
 
-  <span id="count">
-    0/7 completed
+  <span id="taskCount">
+    Tasks
   </span>
-
-</div>
-
-
-<!-- INSTAGRAM -->
-
-<div
-  class="task"
-  data-id="instagram"
-  data-type="social"
->
-
-  <div class="icon">📸</div>
-
-  <div class="info">
-
-    <b>Follow BharatMine Instagram</b>
-
-    <small>
-      Follow our official Instagram page
-    </small>
-
-    <div class="reward">
-      +2 BHM
-    </div>
-
-  </div>
-
-  <button
-    class="action"
-    onclick="openTask(this,'instagram','https://www.instagram.com/bharatmine.in')"
-  >
-    OPEN
-  </button>
 
 </div>
 
@@ -784,17 +586,20 @@ button:disabled{
 <div
   class="task"
   data-id="youtube"
-  data-type="social"
->
+  data-type="social">
 
-  <div class="icon">▶️</div>
+  <div class="icon">
+    ▶️
+  </div>
 
   <div class="info">
 
-    <b>Subscribe BharatMine YouTube</b>
+    <b>
+      Subscribe BharatMine YouTube
+    </b>
 
     <small>
-      Subscribe to our official YouTube channel
+      Subscribe to our official Telegram/YouTube community
     </small>
 
     <div class="reward">
@@ -805,27 +610,33 @@ button:disabled{
 
   <button
     class="action"
-    onclick="openTask(this,'youtube','https://youtube.com/@bharatmine-in')"
-  >
+    onclick="openTask(
+      this,
+      'youtube',
+      'https://youtube.com/@bharatmine-in'
+    )">
     OPEN
   </button>
 
 </div>
 
 
-<!-- BOT -->
+<!-- TELEGRAM BOT -->
 
 <div
   class="task"
   data-id="bot"
-  data-type="social"
->
+  data-type="social">
 
-  <div class="icon">🤖</div>
+  <div class="icon">
+    🤖
+  </div>
 
   <div class="info">
 
-    <b>Start BharatMine Bot</b>
+    <b>
+      Start BharatMine Bot
+    </b>
 
     <small>
       Open and start our official Telegram bot
@@ -839,27 +650,33 @@ button:disabled{
 
   <button
     class="action"
-    onclick="openTask(this,'bot','https://t.me/BharatMineBot')"
-  >
+    onclick="openTask(
+      this,
+      'bot',
+      'https://t.me/BharatMineBot'
+    )">
     OPEN
   </button>
 
 </div>
 
 
-<!-- INVITE 3 -->
+<!-- INVITE -->
 
 <div
   class="task"
   data-id="invite3"
-  data-type="social"
->
+  data-type="social">
 
-  <div class="icon">👥</div>
+  <div class="icon">
+    👥
+  </div>
 
   <div class="info">
 
-    <b>Invite 3 Friends</b>
+    <b>
+      Invite 3 Friends
+    </b>
 
     <small>
       Invite friends using your referral link
@@ -873,8 +690,7 @@ button:disabled{
 
   <button
     class="action"
-    onclick="invite()"
-  >
+    onclick="invite()">
     INVITE
   </button>
 
@@ -886,17 +702,20 @@ button:disabled{
 <div
   class="task"
   data-id="game1"
-  data-type="games"
->
+  data-type="games">
 
-  <div class="icon">🎮</div>
+  <div class="icon">
+    🎮
+  </div>
 
   <div class="info">
 
-    <b>Play a Partner Game</b>
+    <b>
+      Play a Partner Game
+    </b>
 
     <small>
-      Open a game offer and complete its task
+      Complete the partner game requirement
     </small>
 
     <div class="reward">
@@ -907,30 +726,32 @@ button:disabled{
 
   <button
     class="action"
-    onclick="claimTask(this,'game1')"
-  >
+    onclick="claimTask(this,'game1')">
     CLAIM
   </button>
 
 </div>
 
 
-<!-- LEVEL -->
+<!-- LEVEL 5 -->
 
 <div
   class="task"
   data-id="level5"
-  data-type="games"
->
+  data-type="games">
 
-  <div class="icon">🏆</div>
+  <div class="icon">
+    🏆
+  </div>
 
   <div class="info">
 
-    <b>Reach Level 5</b>
+    <b>
+      Reach Level 5
+    </b>
 
     <small>
-      Complete the level requirement in a partner game
+      Complete the level requirement
     </small>
 
     <div class="reward">
@@ -941,35 +762,38 @@ button:disabled{
 
   <button
     class="action"
-    onclick="claimTask(this,'level5')"
-  >
+    onclick="claimTask(this,'level5')">
     CLAIM
   </button>
 
 </div>
 
 
-<!-- DAILY -->
+<!-- DAILY CODE -->
 
 <div
   class="task"
   data-id="daily"
-  data-type="daily"
->
+  data-type="daily">
 
-  <div class="icon">🎁</div>
+  <div class="icon">
+    🎁
+  </div>
 
   <div class="info">
 
-    <b>Daily Code</b>
+    <b>
+      Daily Code
+    </b>
 
-    <small>
+    <small id="dailyDescription">
       Enter today's BharatMine Daily Code
     </small>
 
     <div class="reward">
       +2 BHM
     </div>
+
 
     <div class="daily-code-box">
 
@@ -979,18 +803,17 @@ button:disabled{
         type="text"
         maxlength="20"
         placeholder="Enter Daily Code"
-        autocomplete="off"
-      >
+        autocomplete="off">
 
       <button
         id="dailyCodeButton"
         class="daily-code-button"
-        onclick="claimDailyCode()"
-      >
+        onclick="claimDailyCode()">
         CLAIM
       </button>
 
     </div>
+
 
     <div class="daily-note">
       Daily code is available once every day.
@@ -1001,50 +824,52 @@ button:disabled{
 </div>
 
 
-<!-- MINING TASK -->
+<!-- MINING -->
 
 <div
   class="task"
   data-id="mine"
-  data-type="daily"
->
+  data-type="daily">
 
-  <div class="icon">⛏️</div>
+  <div class="icon">
+    ⛏️
+  </div>
 
   <div class="info">
 
-    <b>Start Mining Today</b>
+    <b>
+      Start Mining Today
+    </b>
 
     <small>
       Start your 24-hour mining session
     </small>
 
     <div class="reward">
-      0.001 BHM / minute
+      0.01 BHM / minute
     </div>
 
   </div>
 
   <button
     class="action"
-    onclick="openMine()"
-  >
+    onclick="openMine()">
     MINE
   </button>
 
 </div>
+
 
 </section>
 
 </div>
 
 
-<!-- MINING SCREEN -->
+<!-- ================= MINING SCREEN ================= -->
 
 <div
   id="mineScreen"
-  class="mine-screen"
->
+  class="mine-screen">
 
 <div class="mine-card">
 
@@ -1062,28 +887,25 @@ button:disabled{
 
   <div
     id="timer"
-    class="timer"
-  >
+    class="timer">
     24:00:00
   </div>
 
   <div
     id="miningStatus"
-    class="mining-status"
-  >
+    class="mining-status">
     Not mining
   </div>
 
   <button
     id="mineButton"
     class="mine-btn"
-    onclick="toggleMining()"
-  >
+    onclick="toggleMining()">
     START MINING
   </button>
 
   <div class="rate">
-    Mining rate: 0.001 BHM per minute
+    Mining rate: 0.01 BHM per minute
   </div>
 
 </div>
@@ -1091,186 +913,168 @@ button:disabled{
 </div>
 
 
-<!-- REFERRAL SCREEN -->
+<!-- ================= WALLET SCREEN ================= -->
 
 <div
-  id="referralScreen"
-  class="referral-screen"
->
+  id="walletScreen"
+  class="wallet-screen">
 
-<div class="referral-hero">
-
-  <div class="referral-icon">
-    👥
-  </div>
+<div class="wallet-card">
 
   <h1>
-    Invite & Earn
+    💼 BSC Wallet
   </h1>
 
   <p>
-    Invite friends to BharatMine. Every genuine referral earns you BHM.
+    Connect your MetaMask or Trust Wallet and securely link it to your BharatMine Telegram account.
   </p>
 
-</div>
-
-
-<div class="referral-stats">
-
-  <div class="referral-stat">
-
-    <b id="referralCount">
-      0
-    </b>
-
-    <small>
-      Total Referrals
-    </small>
-
-  </div>
-
-  <div class="referral-stat">
-
-    <b id="referralEarned">
-      0.00
-    </b>
-
-    <small>
-      Referral BHM
-    </small>
-
-  </div>
-
-</div>
-
-
-<div class="referral-link-box">
-
-  <b>
-    🔗 Your Referral Link
-  </b>
 
   <div
-    id="referralLink"
-    class="referral-link"
-  >
-    Loading...
-  </div>
+    id="walletStatus"
+    class="wallet-status">
 
-  <div class="referral-actions">
+    <div class="wallet-label">
+      Wallet status
+    </div>
 
-    <button
-      class="referral-btn copy-btn"
-      onclick="copyReferralLink()"
-    >
-      📋 COPY LINK
-    </button>
+    <div
+      id="walletAddress"
+      class="wallet-address">
+      Not connected
+    </div>
 
-    <button
-      class="referral-btn share-btn"
-      onclick="shareReferralLink()"
-    >
-      📤 SHARE
-    </button>
+    <div
+      id="walletNetwork"
+      class="wallet-network">
+      BSC Network required
+    </div>
 
-  </div>
-
-</div>
-
-
-<div class="milestone-box">
-
-  <div class="milestone-title">
-
-    <b>
-      🏆 Referral Milestones
-    </b>
-
-    <span id="nextMilestone">
-      Loading...
-    </span>
+    <div id="walletVerified"></div>
 
   </div>
 
-  <div id="milestoneList"></div>
+
+  <button
+    id="walletConnectBtn"
+    class="wallet-btn"
+    onclick="connectWallet()">
+    CONNECT WALLET
+  </button>
+
+
+  <button
+    id="walletVerifyBtn"
+    class="wallet-btn secondary"
+    onclick="verifyWallet()"
+    style="display:none">
+    VERIFY OWNERSHIP
+  </button>
+
+
+  <button
+    id="walletDisconnectBtn"
+    class="wallet-btn danger"
+    onclick="disconnectWallet()"
+    style="display:none">
+    DISCONNECT
+  </button>
+
+
+  <div class="wallet-help">
+
+    Network:
+    BNB Smart Chain (BSC).
+
+    Chain ID:
+    56.
+
+    Your private key or seed phrase is never requested.
+
+    <br><br>
+
+    If Telegram does not expose a wallet provider, open this Mini App from the MetaMask or Trust Wallet browser.
+
+  </div>
+
+</div>
 
 </div>
 
 
-<div class="referral-note">
-  More genuine referrals = more BHM rewards.
-  Milestone rewards are given only once.
-</div>
-
-
-<div
-  id="referralList"
-  class="referral-list"
-></div>
-
-</div>
-
-</div>
-
-
-<!-- BOTTOM NAV -->
+<!-- ================= BOTTOM NAV ================= -->
 
 <nav class="bottom">
 
+
 <button
   id="mineNav"
-  onclick="openMine()"
->
-  <i>⛏️</i>
+  onclick="openMine()">
+
+  <i>
+    ⛏️
+  </i>
+
   Mine
+
 </button>
+
 
 <button
   id="taskNav"
   class="active"
-  onclick="openTasks()"
->
-  <i>🎯</i>
+  onclick="openTasks()">
+
+  <i>
+    🎯
+  </i>
+
   Tasks
+
 </button>
 
+
 <button
-  id="inviteNav"
-  onclick="openReferrals()"
->
-  <i>👥</i>
+  onclick="invite()">
+
+  <i>
+    👥
+  </i>
+
   Invite
+
 </button>
 
+
 <button
-  onclick="toast('Wallet will be connected soon')"
->
-  <i>💼</i>
+  onclick="openWallet()">
+
+  <i>
+    💼
+  </i>
+
   Wallet
+
 </button>
+
 
 </nav>
 
 
 <script>
-"use strict";
 
-/* =====================================================
-   BHARATMINE TELEGRAM MINI APP
-   Frontend compatible with current server.js
-===================================================== */
 
-/* =====================================================
+/* ==========================================
    API
-===================================================== */
+========================================== */
 
 const API_BASE =
   "https://bharatmine-6bg6.onrender.com";
 
 
-/* =====================================================
+/* ==========================================
    TELEGRAM
-===================================================== */
+========================================== */
 
 const tg =
   window.Telegram &&
@@ -1279,86 +1083,97 @@ const tg =
     : null;
 
 
-let telegramInitData = "";
-let telegramUser = null;
-
-let userData = null;
-let referralData = null;
-
-let miningStartedAt = null;
-
-let timerInterval = null;
-let miningPollInterval = null;
-
-let toastTimer = null;
+let telegramUser =
+  null;
 
 
-/* =====================================================
-   TELEGRAM INITIALIZATION
-===================================================== */
+let telegramInitData =
+  "";
+
+
+let userData =
+  null;
+
+
+let miningStartedAt =
+  null;
+
+
+let timerInterval =
+  null;
+
+
+/* ==========================================
+   TELEGRAM INITIALIZE
+========================================== */
 
 function initializeTelegram(){
 
   if(!tg){
 
-    showAuthWarning();
-
-    console.error(
-      "Telegram WebApp SDK not available."
+    toast(
+      "Please open BharatMine inside Telegram"
     );
 
     return false;
+
   }
+
 
   try{
 
     tg.ready();
+
     tg.expand();
 
+
     telegramInitData =
-      String(tg.initData || "");
+      tg.initData ||
+      "";
+
 
     telegramUser =
-      tg.initDataUnsafe &&
-      tg.initDataUnsafe.user
-        ? tg.initDataUnsafe.user
-        : null;
+      tg.initDataUnsafe?.user ||
+      null;
 
 
-    if(telegramUser){
+    if(
+      telegramUser
+    ){
 
-      const displayName =
-        telegramUser.username
-          ? "@" + telegramUser.username
-          : (
-              telegramUser.first_name ||
-              "Telegram Miner"
-            );
+      const userElement =
+        document.getElementById(
+          "user"
+        );
 
-      document.getElementById(
-        "user"
-      ).textContent =
-        displayName;
+
+      if(userElement){
+
+        userElement.textContent =
+          "@" +
+          (
+            telegramUser.username ||
+            telegramUser.first_name ||
+            "miner"
+          );
+
+      }
+
     }
 
 
-    if(!telegramInitData){
+    if(
+      !telegramInitData
+    ){
 
-      showAuthWarning();
-
-      console.error(
-        "Telegram authentication data missing."
+      toast(
+        "Open BharatMine from Telegram"
       );
 
       return false;
+
     }
 
-
-    hideAuthWarning();
-
-    console.log(
-      "Telegram authentication detected."
-    );
 
     return true;
 
@@ -1369,119 +1184,34 @@ function initializeTelegram(){
       error
     );
 
-    showAuthWarning();
+
+    toast(
+      "Telegram authentication failed"
+    );
+
 
     return false;
+
   }
+
 }
 
 
-/* =====================================================
-   AUTH WARNING
-===================================================== */
+/* ==========================================
+   HEADERS
+========================================== */
 
-function showAuthWarning(){
-
-  const element =
-    document.getElementById(
-      "authWarning"
-    );
-
-  if(element){
-    element.style.display = "block";
-  }
-}
-
-function hideAuthWarning(){
-
-  const element =
-    document.getElementById(
-      "authWarning"
-    );
-
-  if(element){
-    element.style.display = "none";
-  }
-}
-
-
-/* =====================================================
-   GET INIT DATA
-===================================================== */
-
-function getTelegramInitData(){
+function headers(){
 
   if(
-    telegramInitData &&
-    telegramInitData.length > 0
-  ){
-
-    return telegramInitData;
-  }
-
-
-  if(
-    tg &&
-    tg.initData
+    !telegramInitData
   ){
 
     telegramInitData =
-      String(tg.initData);
+      tg?.initData ||
+      "";
 
-    return telegramInitData;
   }
-
-
-  return "";
-}
-
-
-/* =====================================================
-   AUTH CHECK
-===================================================== */
-
-function requireTelegram(){
-
-  const initData =
-    getTelegramInitData();
-
-
-  if(!tg){
-
-    toast(
-      "Please open BharatMine inside Telegram."
-    );
-
-    showAuthWarning();
-
-    return false;
-  }
-
-
-  if(!initData){
-
-    toast(
-      "Telegram authentication data missing."
-    );
-
-    showAuthWarning();
-
-    return false;
-  }
-
-
-  return true;
-}
-
-
-/* =====================================================
-   API HEADERS
-===================================================== */
-
-function getHeaders(){
-
-  const initData =
-    getTelegramInitData();
 
 
   return {
@@ -1489,87 +1219,117 @@ function getHeaders(){
     "Content-Type":
       "application/json",
 
-    /*
-      IMPORTANT:
-      Current server.js reads exactly:
-      req.headers["x-telegram-init-data"]
-    */
-
     "x-telegram-init-data":
-      initData
+      telegramInitData
+
   };
+
 }
 
 
-/* =====================================================
-   API REQUEST HELPER
-===================================================== */
+/* ==========================================
+   TELEGRAM CHECK
+========================================== */
 
-async function apiRequest(
-  endpoint,
-  options = {}
-){
+function requireTelegram(){
 
-  if(!requireTelegram()){
+  if(!tg){
 
-    throw new Error(
+    toast(
+      "Please open this app inside Telegram"
+    );
+
+    return false;
+
+  }
+
+
+  if(
+    !telegramInitData
+  ){
+
+    telegramInitData =
+      tg.initData ||
+      "";
+
+  }
+
+
+  if(
+    !telegramInitData
+  ){
+
+    toast(
       "Telegram authentication data missing"
     );
+
+    return false;
+
   }
 
 
-  const response =
-    await fetch(
-      API_BASE + endpoint,
-      {
-        ...options,
+  return true;
 
-        headers:{
-          ...getHeaders(),
-          ...(options.headers || {})
-        },
-
-        cache:
-          options.cache ||
-          "no-store"
-      }
-    );
-
-
-  let data = {};
-
-  try{
-
-    data =
-      await response.json();
-
-  }catch{
-
-    data = {};
-  }
-
-
-  if(!response.ok){
-
-    throw new Error(
-      data.error ||
-      `Request failed (${response.status})`
-    );
-  }
-
-
-  return data;
 }
 
 
-/* =====================================================
+/* ==========================================
    TOAST
-===================================================== */
+========================================== */
 
 function toast(message){
 
+  const x =
+    document.getElementById(
+      "toast"
+    );
+
+
+  if(!x){
+    return;
+  }
+
+
+  x.textContent =
+    message;
+
+
+  x.classList.add(
+    "show"
+  );
+
+
+  clearTimeout(
+    window.toastTimer
+  );
+
+
+  window.toastTimer =
+    setTimeout(
+      () => {
+
+        x.classList.remove(
+          "show"
+        );
+
+      },
+      2500
+    );
+
+}
+
+
+/* ==========================================
+   BALANCE
+========================================== */
+
+function setBalance(value){
+
   const element =
-    document.getElementById("toast");
+    document.getElementById(
+      "bal"
+    );
+
 
   if(!element){
     return;
@@ -1577,68 +1337,54 @@ function toast(message){
 
 
   element.textContent =
-    String(message || "");
+    Number(
+      value || 0
+    ).toFixed(2);
 
-
-  element.classList.add(
-    "show"
-  );
-
-
-  clearTimeout(
-    toastTimer
-  );
-
-
-  toastTimer =
-    setTimeout(
-      ()=>{
-        element.classList.remove(
-          "show"
-        );
-      },
-      2600
-    );
 }
 
 
-/* =====================================================
-   BALANCE
-===================================================== */
-
-function setBalance(value){
-
-  const amount =
-    Number(value || 0);
-
-
-  document.getElementById(
-    "bal"
-  ).textContent =
-    amount.toFixed(2);
-}
-
-
-/* =====================================================
+/* ==========================================
    LOAD USER
-===================================================== */
+========================================== */
 
 async function loadUser(){
 
-  if(!requireTelegram()){
+  if(
+    !requireTelegram()
+  ){
+
     return;
+
   }
 
 
   try{
 
-    const data =
-      await apiRequest(
+    const r =
+      await fetch(
+        API_BASE +
         "/api/me",
         {
-          method:"GET"
+          method:"GET",
+          headers:headers(),
+          cache:"no-store"
         }
       );
+
+
+    const data =
+      await r.json();
+
+
+    if(!r.ok){
+
+      throw new Error(
+        data.error ||
+        "Authentication failed"
+      );
+
+    }
 
 
     userData =
@@ -1658,1595 +1404,131 @@ async function loadUser(){
     updateMiningUI();
 
 
-    /*
-      Mark already claimed tasks.
-    */
-
-    document
-      .querySelectorAll(
-        ".task[data-id]"
-      )
-      .forEach(task => {
-
-        const id =
-          task.dataset.id;
-
-        const button =
-          task.querySelector(
-            ".action"
-          );
-
-        if(!button){
-          return;
-        }
-
-
-        /*
-          Mining is not a normal claimed task.
-        */
-
-        if(id === "mine"){
-          return;
-        }
-
-
-        /*
-          Invite3 is based on referrals.
-        */
-
-        if(
-          id === "invite3" &&
-          data.referrals &&
-          Number(data.referrals.count || 0) >= 3
-        ){
-
-          button.classList.add(
-            "done"
-          );
-
-          button.textContent =
-            "DONE";
-
-          button.disabled =
-            true;
-
-          return;
-        }
-
-
-        if(
-          Array.isArray(
-            data.claimed_tasks
-          ) &&
-          data.claimed_tasks.includes(id)
-        ){
-
-          button.classList.add(
-            "done"
-          );
-
-          button.textContent =
-            "DONE";
-
-          button.disabled =
-            true;
-        }
-
-      });
-
-
-    /*
-      Daily task.
-    */
-
     if(
       Array.isArray(
         data.claimed_tasks
-      ) &&
-      data.claimed_tasks.includes(
-        "daily"
       )
     ){
 
-      markDailyDone();
-    }
+      data.claimed_tasks.forEach(
+        taskId => {
+
+          const task =
+            document.querySelector(
+              '.task[data-id="' +
+              taskId +
+              '"]'
+            );
 
 
-    updateTaskCount();
+          if(!task){
+            return;
+          }
 
 
-    /*
-      Save referral information.
-    */
+          if(
+            taskId ===
+            "daily"
+          ){
 
-    if(data.referrals){
+            return;
 
-      referralData =
-        data.referrals;
+          }
 
-      renderReferralData();
+
+          const btn =
+            task.querySelector(
+              ".action"
+            );
+
+
+          if(!btn){
+            return;
+          }
+
+
+          btn.classList.add(
+            "done"
+          );
+
+
+          btn.textContent =
+            "DONE";
+
+
+          btn.disabled =
+            true;
+
+        }
+      );
+
     }
 
 
     await loadDailyStatus();
 
-  }catch(error){
+    updateTaskCount();
+
+
+  }catch(e){
 
     console.error(
-      "LOAD USER ERROR:",
-      error
+      "ME ERROR:",
+      e
     );
 
 
     toast(
-      error.message ||
-      "Unable to load account"
+      e.message ||
+      "Authentication failed"
     );
+
   }
+
 }
 
 
-/* =====================================================
-   DAILY DONE
-===================================================== */
-
-function markDailyDone(){
-
-  const button =
-    document.getElementById(
-      "dailyCodeButton"
-    );
-
-  const input =
-    document.getElementById(
-      "dailyCodeInput"
-    );
-
-
-  if(button){
-
-    button.textContent =
-      "DONE";
-
-    button.disabled =
-      true;
-
-    button.classList.add(
-      "done"
-    );
-  }
-
-
-  if(input){
-
-    input.disabled =
-      true;
-  }
-}
-
-
-/* =====================================================
-   MINING STATUS
-===================================================== */
-
-async function checkMiningStatus(
-  showCompletionToast = false
-){
-
-  if(!requireTelegram()){
-    return;
-  }
-
-
-  try{
-
-    const data =
-      await apiRequest(
-        "/api/mining/status",
-        {
-          method:"GET"
-        }
-      );
-
-
-    const wasMining =
-      !!miningStartedAt;
-
-
-    miningStartedAt =
-      data.mining_started_at ||
-      null;
-
-
-    if(
-      typeof data.balance !==
-      "undefined"
-    ){
-
-      setBalance(
-        data.balance
-      );
-
-
-      if(!userData){
-        userData = {};
-      }
-
-
-      userData.balance =
-        Number(
-          data.balance || 0
-        );
-    }
-
-
-    updateMiningUI();
-
-
-    if(
-      data.completed === true &&
-      Number(data.reward || 0) > 0 &&
-      (showCompletionToast || wasMining)
-    ){
-
-      toast(
-        "🎉 Mining complete! +" +
-        Number(data.reward).toFixed(3) +
-        " BHM added"
-      );
-    }
-
-
-  }catch(error){
-
-    console.error(
-      "MINING STATUS ERROR:",
-      error
-    );
-  }
-}
-
-
-/* =====================================================
-   MINING UI
-===================================================== */
-
-function updateMiningUI(){
-
-  const button =
-    document.getElementById(
-      "mineButton"
-    );
-
-  const timer =
-    document.getElementById(
-      "timer"
-    );
-
-  const status =
-    document.getElementById(
-      "miningStatus"
-    );
-
-
-  if(
-    !button ||
-    !timer ||
-    !status
-  ){
-    return;
-  }
-
-
-  clearInterval(
-    timerInterval
-  );
-
-  timerInterval =
-    null;
-
-
-  if(!miningStartedAt){
-
-    timer.textContent =
-      "24:00:00";
-
-    status.textContent =
-      "Not mining";
-
-    button.textContent =
-      "START MINING";
-
-    button.disabled =
-      false;
-
-    button.classList.remove(
-      "active"
-    );
-
-    return;
-  }
-
-
-  button.textContent =
-    "MINING ACTIVE";
-
-  button.disabled =
-    true;
-
-  button.classList.add(
-    "active"
-  );
-
-
-  function tick(){
-
-    const start =
-      new Date(
-        miningStartedAt
-      ).getTime();
-
-
-    const elapsed =
-      Math.max(
-        0,
-        (Date.now() - start) / 1000
-      );
-
-
-    const total =
-      24 * 60 * 60;
-
-
-    const remaining =
-      Math.max(
-        0,
-        Math.ceil(
-          total - elapsed
-        )
-      );
-
-
-    if(remaining <= 0){
-
-      timer.textContent =
-        "00:00:00";
-
-      status.textContent =
-        "Mining complete — processing reward...";
-
-
-      clearInterval(
-        timerInterval
-      );
-
-
-      timerInterval =
-        null;
-
-
-      checkMiningStatus(
-        true
-      );
-
-      return;
-    }
-
-
-    timer.textContent =
-      formatTime(
-        remaining
-      );
-
-
-    status.textContent =
-      "Mining active • " +
-      formatTime(remaining) +
-      " remaining";
-  }
-
-
-  tick();
-
-
-  timerInterval =
-    setInterval(
-      tick,
-      1000
-    );
-}
-
-
-/* =====================================================
-   FORMAT TIME
-===================================================== */
-
-function formatTime(seconds){
-
-  seconds =
-    Math.max(
-      0,
-      Math.floor(
-        Number(seconds || 0)
-      )
-    );
-
-
-  const h =
-    Math.floor(
-      seconds / 3600
-    );
-
-
-  const m =
-    Math.floor(
-      (seconds % 3600) / 60
-    );
-
-
-  const s =
-    seconds % 60;
-
-
-  return (
-    String(h).padStart(2,"0") +
-    ":" +
-    String(m).padStart(2,"0") +
-    ":" +
-    String(s).padStart(2,"0")
-  );
-}
-
-
-/* =====================================================
-   START MINING
-===================================================== */
-
-async function startMining(){
-
-  if(!requireTelegram()){
-    return;
-  }
-
-
-  const button =
-    document.getElementById(
-      "mineButton"
-    );
-
-
-  if(button){
-    button.disabled =
-      true;
-  }
-
-
-  try{
-
-    const data =
-      await apiRequest(
-        "/api/mining/start",
-        {
-          method:"POST",
-          body:JSON.stringify({})
-        }
-      );
-
-
-    miningStartedAt =
-      data.mining_started_at ||
-      null;
-
-
-    updateMiningUI();
-
-
-    toast(
-      data.alreadyMining
-        ? "⛏️ Mining is already active."
-        : "⛏️ Mining started for 24 hours."
-    );
-
-
-  }catch(error){
-
-    console.error(
-      "START MINING ERROR:",
-      error
-    );
-
-
-    toast(
-      error.message ||
-      "Mining could not start"
-    );
-
-
-    if(button){
-      button.disabled =
-        false;
-    }
-  }
-}
-
-
-/* =====================================================
-   TOGGLE MINING
-===================================================== */
-
-function toggleMining(){
-
-  if(miningStartedAt){
-
-    toast(
-      "⛏️ Mining is already active."
-    );
-
-    return;
-  }
-
-
-  startMining();
-}
-
-
-/* =====================================================
-   OPEN MINE
-===================================================== */
-
-function openMine(){
-
-  document.getElementById(
-    "taskScreen"
-  ).style.display =
-    "none";
-
-
-  document.getElementById(
-    "referralScreen"
-  ).style.display =
-    "none";
-
-
-  document.getElementById(
-    "mineScreen"
-  ).style.display =
-    "block";
-
-
-  document.getElementById(
-    "mineNav"
-  ).classList.add(
-    "active"
-  );
-
-
-  document.getElementById(
-    "taskNav"
-  ).classList.remove(
-    "active"
-  );
-
-
-  document.getElementById(
-    "inviteNav"
-  ).classList.remove(
-    "active"
-  );
-
-
-  window.scrollTo({
-    top:0,
-    behavior:"smooth"
-  });
-
-
-  checkMiningStatus(false);
-}
-
-
-/* =====================================================
-   OPEN TASKS
-===================================================== */
-
-function openTasks(){
-
-  document.getElementById(
-    "mineScreen"
-  ).style.display =
-    "none";
-
-
-  document.getElementById(
-    "referralScreen"
-  ).style.display =
-    "none";
-
-
-  document.getElementById(
-    "taskScreen"
-  ).style.display =
-    "block";
-
-
-  document.getElementById(
-    "taskNav"
-  ).classList.add(
-    "active"
-  );
-
-
-  document.getElementById(
-    "mineNav"
-  ).classList.remove(
-    "active"
-  );
-
-
-  document.getElementById(
-    "inviteNav"
-  ).classList.remove(
-    "active"
-  );
-
-
-  window.scrollTo({
-    top:0,
-    behavior:"smooth"
-  });
-}
-
-
-/* =====================================================
-   OPEN REFERRALS
-===================================================== */
-
-function openReferrals(){
-
-  document.getElementById(
-    "taskScreen"
-  ).style.display =
-    "none";
-
-
-  document.getElementById(
-    "mineScreen"
-  ).style.display =
-    "none";
-
-
-  document.getElementById(
-    "referralScreen"
-  ).style.display =
-    "block";
-
-
-  document.getElementById(
-    "mineNav"
-  ).classList.remove(
-    "active"
-  );
-
-
-  document.getElementById(
-    "taskNav"
-  ).classList.remove(
-    "active"
-  );
-
-
-  document.getElementById(
-    "inviteNav"
-  ).classList.add(
-    "active"
-  );
-
-
-  window.scrollTo({
-    top:0,
-    behavior:"smooth"
-  });
-
-
-  loadReferralData();
-}
-
-
-/* =====================================================
-   FILTER TASKS
-===================================================== */
-
-function filterTasks(
-  type,
-  button
-){
-
-  document
-    .querySelectorAll(
-      ".tabs button"
-    )
-    .forEach(
-      btn =>
-        btn.classList.remove(
-          "active"
-        )
-    );
-
-
-  if(button){
-
-    button.classList.add(
-      "active"
-    );
-  }
-
-
-  document
-    .querySelectorAll(
-      ".task[data-type]"
-    )
-    .forEach(
-      task => {
-
-        const taskType =
-          task.dataset.type;
-
-
-        if(
-          type === "all" ||
-          taskType === type
-        ){
-
-          task.classList.remove(
-            "hidden"
-          );
-
-        }else{
-
-          task.classList.add(
-            "hidden"
-          );
-        }
-
-      }
-    );
-}
-
-
-/* =====================================================
-   OPEN SOCIAL TASK
-===================================================== */
-
-function openTask(
-  button,
-  id,
-  url
-){
+/* ==========================================
+   DAILY STATUS
+========================================== */
+
+async function loadDailyStatus(){
 
   if(
     !requireTelegram()
   ){
-    return;
-  }
-
-
-  if(
-    button.disabled
-  ){
-    return;
-  }
-
-
-  if(
-    button.dataset.opened !==
-    "yes"
-  ){
-
-    button.dataset.opened =
-      "yes";
-
-    button.textContent =
-      "CLAIM";
-
-
-    try{
-
-      if(
-        tg &&
-        typeof tg.openLink ===
-        "function"
-      ){
-
-        tg.openLink(
-          url
-        );
-
-      }else{
-
-        window.open(
-          url,
-          "_blank"
-        );
-      }
-
-    }catch(error){
-
-      console.error(
-        error
-      );
-
-      window.open(
-        url,
-        "_blank"
-      );
-    }
-
-
-    toast(
-      "Task opened. Come back and press CLAIM."
-    );
-
 
     return;
-  }
 
-
-  claimTask(
-    button,
-    id
-  );
-}
-
-
-/* =====================================================
-   CLAIM TASK
-===================================================== */
-
-async function claimTask(
-  button,
-  id
-){
-
-  if(!requireTelegram()){
-    return;
-  }
-
-
-  if(
-    !button ||
-    button.disabled
-  ){
-    return;
-  }
-
-
-  button.disabled =
-    true;
-
-
-  try{
-
-    const data =
-      await apiRequest(
-        "/api/tasks/" +
-        encodeURIComponent(id) +
-        "/claim",
-        {
-          method:"POST",
-          body:JSON.stringify({})
-        }
-      );
-
-
-    const reward =
-      Number(
-        data.reward || 0
-      );
-
-
-    await loadUser();
-
-
-    button.classList.add(
-      "done"
-    );
-
-    button.textContent =
-      "DONE";
-
-    button.disabled =
-      true;
-
-
-    toast(
-      "🎉 +" +
-      reward +
-      " BHM added"
-    );
-
-
-    updateTaskCount();
-
-
-  }catch(error){
-
-    console.error(
-      "CLAIM TASK ERROR:",
-      error
-    );
-
-
-    button.disabled =
-      false;
-
-
-    toast(
-      error.message ||
-      "Task claim failed"
-    );
-  }
-}
-
-
-/* =====================================================
-   REFERRAL LINK
-===================================================== */
-
-function getReferralLink(){
-
-  if(
-    referralData &&
-    referralData.referral_link
-  ){
-
-    return referralData.referral_link;
-  }
-
-
-  if(
-    telegramUser &&
-    telegramUser.id
-  ){
-
-    return (
-      "https://t.me/BharatMineBot?start=ref_" +
-      encodeURIComponent(
-        telegramUser.id
-      )
-    );
-  }
-
-
-  return "";
-}
-
-
-/* =====================================================
-   INVITE
-===================================================== */
-
-function invite(){
-
-  if(!requireTelegram()){
-    return;
-  }
-
-
-  openReferrals();
-}
-
-
-/* =====================================================
-   LOAD REFERRALS
-===================================================== */
-
-async function loadReferralData(){
-
-  if(!requireTelegram()){
-    return;
   }
 
 
   try{
 
-    const data =
-      await apiRequest(
-        "/api/referrals",
-        {
-          method:"GET"
-        }
-      );
-
-
-    referralData =
-      data;
-
-
-    renderReferralData();
-
-
-  }catch(error){
-
-    console.error(
-      "REFERRAL ERROR:",
-      error
-    );
-
-
-    toast(
-      error.message ||
-      "Unable to load referrals"
-    );
-  }
-}
-
-
-/* =====================================================
-   RENDER REFERRALS
-===================================================== */
-
-function renderReferralData(){
-
-  if(!referralData){
-    return;
-  }
-
-
-  const count =
-    Number(
-      referralData.count || 0
-    );
-
-
-  const link =
-    referralData.referral_link ||
-    getReferralLink();
-
-
-  document.getElementById(
-    "referralCount"
-  ).textContent =
-    count;
-
-
-  document.getElementById(
-    "referralLink"
-  ).textContent =
-    link ||
-    "Unable to create referral link";
-
-
-  /*
-    Current server.js:
-    Base referral = 5 BHM
-    Milestone rewards are separate.
-  */
-
-  let baseEarned =
-    count * 5;
-
-
-  let milestoneEarned =
-    0;
-
-
-  if(
-    Array.isArray(
-      referralData.milestones
-    )
-  ){
-
-    referralData.milestones
-      .forEach(
-        milestone => {
-
-          if(
-            count >=
-            Number(
-              milestone.count
-            )
-          ){
-
-            milestoneEarned +=
-              Number(
-                milestone.reward || 0
-              );
-          }
-
-        }
-      );
-  }
-
-
-  document.getElementById(
-    "referralEarned"
-  ).textContent =
-    (
-      baseEarned +
-      milestoneEarned
-    ).toFixed(2);
-
-
-  /*
-    Next milestone
-  */
-
-  let next =
-    null;
-
-
-  if(
-    Array.isArray(
-      referralData.milestones
-    )
-  ){
-
-    next =
-      referralData.milestones.find(
-        milestone =>
-          count <
-          Number(
-            milestone.count
-          )
-      );
-  }
-
-
-  const nextElement =
-    document.getElementById(
-      "nextMilestone"
-    );
-
-
-  if(next){
-
-    nextElement.textContent =
-      (
-        Number(next.count) -
-        count
-      ) +
-      " more to " +
-      next.count;
-
-  }else{
-
-    nextElement.textContent =
-      "All milestones reached";
-  }
-
-
-  /*
-    Milestone list
-  */
-
-  const list =
-    document.getElementById(
-      "milestoneList"
-    );
-
-
-  list.innerHTML =
-    "";
-
-
-  if(
-    Array.isArray(
-      referralData.milestones
-    )
-  ){
-
-    referralData.milestones
-      .forEach(
-        milestone => {
-
-          const target =
-            Number(
-              milestone.count
-            );
-
-          const reward =
-            Number(
-              milestone.reward || 0
-            );
-
-
-          const progress =
-            Math.min(
-              100,
-              target > 0
-                ? (
-                    count /
-                    target
-                  ) * 100
-                : 0
-            );
-
-
-          const completed =
-            count >= target;
-
-
-          const row =
-            document.createElement(
-              "div"
-            );
-
-
-          row.className =
-            "milestone";
-
-
-          row.innerHTML = `
-
-            <div class="milestone-top">
-
-              <span>
-                ${completed ? "✅" : "🏆"}
-                ${target} Referrals
-              </span>
-
-              <span>
-                +${reward} BHM
-              </span>
-
-            </div>
-
-            <div class="progress">
-
-              <div
-                class="progress-bar"
-                style="width:${progress}%"
-              ></div>
-
-            </div>
-          `;
-
-
-          list.appendChild(
-            row
-          );
-        }
-      );
-  }
-
-
-  /*
-    Referral users
-  */
-
-  const referralList =
-    document.getElementById(
-      "referralList"
-    );
-
-
-  referralList.innerHTML =
-    "";
-
-
-  const referrals =
-    Array.isArray(
-      referralData.referrals
-    )
-      ? referralData.referrals
-      : [];
-
-
-  if(
-    referrals.length > 0
-  ){
-
-    const title =
-      document.createElement(
-        "div"
-      );
-
-
-    title.className =
-      "section-title";
-
-
-    title.innerHTML = `
-      <h2>👥 My Referrals</h2>
-      <span>${referrals.length}</span>
-    `;
-
-
-    referralList.appendChild(
-      title
-    );
-
-
-    referrals.forEach(
-      user => {
-
-        const row =
-          document.createElement(
-            "div"
-          );
-
-
-        row.className =
-          "referral-user";
-
-
-        const name =
-          user.username
-            ? "@" + user.username
-            : (
-                user.first_name ||
-                "Miner"
-              );
-
-
-        const joined =
-          user.created_at
-            ? new Date(
-                user.created_at
-              ).toLocaleDateString(
-                "en-IN"
-              )
-            : "";
-
-
-        row.innerHTML = `
-
-          <div class="referral-avatar">
-            ⛏️
-          </div>
-
-          <div class="referral-user-info">
-
-            <b>
-              ${escapeHtml(name)}
-            </b>
-
-            <small>
-              Joined ${escapeHtml(joined)}
-            </small>
-
-          </div>
-
-          <div class="referral-earned">
-            +5 BHM
-          </div>
-
-        `;
-
-
-        referralList.appendChild(
-          row
-        );
-      }
-    );
-
-  }else{
-
-    const empty =
-      document.createElement(
-        "div"
-      );
-
-
-    empty.className =
-      "referral-note";
-
-
-    empty.textContent =
-      "Invite your first friend to start earning referral BHM.";
-
-
-    referralList.appendChild(
-      empty
-    );
-  }
-}
-
-
-/* =====================================================
-   ESCAPE HTML
-===================================================== */
-
-function escapeHtml(value){
-
-  return String(
-    value || ""
-  )
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
-}
-
-
-/* =====================================================
-   COPY REFERRAL
-===================================================== */
-
-async function copyReferralLink(){
-
-  const link =
-    getReferralLink();
-
-
-  if(!link){
-
-    toast(
-      "Referral link not available."
-    );
-
-    return;
-  }
-
-
-  try{
-
-    if(
-      navigator.clipboard &&
-      window.isSecureContext
-    ){
-
-      await navigator.clipboard.writeText(
-        link
-      );
-
-    }else{
-
-      const textarea =
-        document.createElement(
-          "textarea"
-        );
-
-
-      textarea.value =
-        link;
-
-      textarea.style.position =
-        "fixed";
-
-      textarea.style.opacity =
-        "0";
-
-      document.body.appendChild(
-        textarea
-      );
-
-      textarea.focus();
-      textarea.select();
-
-      document.execCommand(
-        "copy"
-      );
-
-      textarea.remove();
-    }
-
-
-    toast(
-      "📋 Referral link copied!"
-    );
-
-  }catch(error){
-
-    console.error(
-      "COPY ERROR:",
-      error
-    );
-
-
-    toast(
-      "Copy failed. Please copy manually."
-    );
-  }
-}
-
-
-/* =====================================================
-   SHARE REFERRAL
-===================================================== */
-
-function shareReferralLink(){
-
-  if(!requireTelegram()){
-    return;
-  }
-
-
-  const link =
-    getReferralLink();
-
-
-  if(!link){
-
-    toast(
-      "Referral link not available."
-    );
-
-    return;
-  }
-
-
-  const text =
-    "⛏️ Join me on BharatMine and start mining BHM!";
-
-
-  const shareUrl =
-    "https://t.me/share/url?url=" +
-    encodeURIComponent(link) +
-    "&text=" +
-    encodeURIComponent(text);
-
-
-  try{
-
-    if(
-      tg &&
-      typeof tg.openTelegramLink ===
-      "function"
-    ){
-
-      tg.openTelegramLink(
-        shareUrl
-      );
-
-    }else{
-
-      window.open(
-        shareUrl,
-        "_blank"
-      );
-    }
-
-  }catch(error){
-
-    console.error(
-      "SHARE ERROR:",
-      error
-    );
-
-    window.open(
-      shareUrl,
-      "_blank"
-    );
-  }
-}
-
-
-/* =====================================================
-   DAILY STATUS
-===================================================== */
-
-async function loadDailyStatus(){
-
-  if(!requireTelegram()){
-    return;
-  }
-
-
-  try{
-
-    const data =
-      await apiRequest(
+    const r =
+      await fetch(
+        API_BASE +
         "/api/daily",
         {
-          method:"GET"
+          method:"GET",
+          headers:headers(),
+          cache:"no-store"
         }
+      );
+
+
+    const data =
+      await r.json();
+
+
+    if(!r.ok){
+      return;
+    }
+
+
+    const input =
+      document.getElementById(
+        "dailyCodeInput"
       );
 
 
@@ -3256,50 +1538,92 @@ async function loadDailyStatus(){
       );
 
 
-    const input =
+    const description =
       document.getElementById(
-        "dailyCodeInput"
+        "dailyDescription"
       );
 
 
-    if(data.claimed){
+    if(
+      data.claimed
+    ){
 
-      markDailyDone();
+      input.disabled =
+        true;
+
+
+      input.value =
+        "";
+
+
+      input.placeholder =
+        "Daily code claimed";
+
+
+      button.disabled =
+        true;
+
+
+      button.classList.add(
+        "done"
+      );
+
+
+      button.textContent =
+        "DONE";
+
+
+      description.textContent =
+        "Today's Daily Code already claimed";
 
     }else{
 
-      button.textContent =
-        "CLAIM";
+      input.disabled =
+        false;
+
 
       button.disabled =
         false;
+
 
       button.classList.remove(
         "done"
       );
 
-      input.disabled =
-        false;
+
+      button.textContent =
+        "CLAIM";
+
+
+      description.textContent =
+        "Enter today's BharatMine Daily Code";
+
     }
 
-  }catch(error){
+  }catch(e){
 
     console.error(
       "DAILY STATUS ERROR:",
-      error
+      e
     );
+
   }
+
 }
 
 
-/* =====================================================
-   DAILY CLAIM
-===================================================== */
+/* ==========================================
+   DAILY CODE CLAIM
+========================================== */
 
 async function claimDailyCode(){
 
-  if(!requireTelegram()){
+  if(
+    !requireTelegram()
+  ){
+
     return;
+
   }
 
 
@@ -3316,9 +1640,7 @@ async function claimDailyCode(){
 
 
   const code =
-    String(
-      input.value || ""
-    )
+    input.value
       .trim()
       .toUpperCase();
 
@@ -3326,10 +1648,14 @@ async function claimDailyCode(){
   if(!code){
 
     toast(
-      "Enter today's Daily Code."
+      "Enter today's Daily Code"
     );
 
+
+    input.focus();
+
     return;
+
   }
 
 
@@ -3339,38 +1665,105 @@ async function claimDailyCode(){
 
   try{
 
-    const data =
-      await apiRequest(
+    const r =
+      await fetch(
+        API_BASE +
         "/api/daily/claim",
         {
           method:"POST",
-          body:JSON.stringify({
-            code:code
-          })
+          headers:headers(),
+          body:
+            JSON.stringify({
+              code:code
+            }),
+          cache:"no-store"
         }
       );
 
 
-    markDailyDone();
+    const data =
+      await r.json();
+
+
+    if(
+      r.status ===
+      409
+    ){
+
+      button.classList.add(
+        "done"
+      );
+
+
+      button.textContent =
+        "DONE";
+
+
+      input.disabled =
+        true;
+
+
+      input.value =
+        "";
+
+
+      toast(
+        "Daily Code already claimed"
+      );
+
+
+      await loadUser();
+
+      return;
+
+    }
+
+
+    if(!r.ok){
+
+      throw new Error(
+        data.error ||
+        "Invalid Daily Code"
+      );
+
+    }
 
 
     await loadUser();
 
 
+    button.classList.add(
+      "done"
+    );
+
+
+    button.textContent =
+      "DONE";
+
+
+    input.disabled =
+      true;
+
+
+    input.value =
+      "";
+
+
     toast(
-      "🎁 +" +
+      "🎉 +" +
       Number(
-        data.reward || 2
+        data.reward ||
+        0
       ) +
       " BHM added"
     );
 
 
-  }catch(error){
+  }catch(e){
 
     console.error(
       "DAILY CLAIM ERROR:",
-      error
+      e
     );
 
 
@@ -3379,200 +1772,1812 @@ async function claimDailyCode(){
 
 
     toast(
-      error.message ||
-      "Invalid daily code"
+      e.message ||
+      "Invalid Daily Code"
     );
+
   }
+
 }
 
 
-/* =====================================================
+/* ==========================================
+   TASK FILTER
+========================================== */
+
+function filterTasks(
+  type,
+  button
+){
+
+  document
+    .querySelectorAll(
+      ".tabs button"
+    )
+    .forEach(
+      b =>
+        b.classList.remove(
+          "active"
+        )
+    );
+
+
+  button.classList.add(
+    "active"
+  );
+
+
+  document
+    .querySelectorAll(
+      ".task"
+    )
+    .forEach(
+      task => {
+
+        if(
+          type ===
+          "all"
+        ){
+
+          task.style.display =
+            "flex";
+
+          return;
+
+        }
+
+
+        task.style.display =
+          task.dataset.type ===
+          type
+            ? "flex"
+            : "none";
+
+      }
+    );
+
+}
+
+
+/* ==========================================
    TASK COUNT
-===================================================== */
+========================================== */
 
 function updateTaskCount(){
 
-  const ids = [
-    "instagram",
-    "youtube",
-    "bot",
-    "invite3",
-    "game1",
-    "level5",
-    "daily"
-  ];
+  const element =
+    document.getElementById(
+      "taskCount"
+    );
 
 
-  let completed =
+  if(!element){
+    return;
+  }
+
+
+  const tasks =
+    document.querySelectorAll(
+      ".task"
+    );
+
+
+  let remaining =
     0;
 
 
-  ids.forEach(
-    id => {
+  tasks.forEach(
+    task => {
 
-      const task =
-        document.querySelector(
-          '.task[data-id="' +
-          id +
-          '"]'
-        );
-
-
-      if(!task){
-        return;
-      }
-
-
-      const button =
+      const btn =
         task.querySelector(
           ".action"
         );
 
 
       if(
-        button &&
-        button.disabled &&
-        button.textContent ===
-        "DONE"
+        btn &&
+        !btn.disabled
       ){
 
-        completed++;
+        remaining++;
+
       }
+
     }
   );
 
 
-  document.getElementById(
-    "count"
-  ).textContent =
-    completed +
-    "/7 completed";
+  element.textContent =
+    remaining +
+    " available";
+
 }
 
 
-/* =====================================================
-   MINING POLLING
-===================================================== */
+/* ==========================================
+   CLAIM TASK
+========================================== */
 
-function startMiningPolling(){
+async function claimTask(
+  btn,
+  id
+){
 
-  clearInterval(
-    miningPollInterval
-  );
-
-
-  miningPollInterval =
-    setInterval(
-      () => {
-
-        if(
-          document.visibilityState ===
-          "visible" &&
-          requireTelegram()
-        ){
-
-          checkMiningStatus(false);
-        }
-
-      },
-      15000
-    );
-}
-
-
-/* =====================================================
-   VISIBILITY
-===================================================== */
-
-document.addEventListener(
-  "visibilitychange",
-  () => {
-
-    if(
-      document.visibilityState ===
-      "visible"
-    ){
-
-      if(requireTelegram()){
-
-        loadUser();
-
-        checkMiningStatus(
-          false
-        );
-      }
-    }
-  }
-);
-
-
-/* =====================================================
-   DAILY ENTER KEY
-===================================================== */
-
-document.addEventListener(
-  "DOMContentLoaded",
-  () => {
-
-    const input =
-      document.getElementById(
-        "dailyCodeInput"
-      );
-
-
-    if(input){
-
-      input.addEventListener(
-        "keydown",
-        event => {
-
-          if(
-            event.key ===
-            "Enter"
-          ){
-
-            event.preventDefault();
-
-            claimDailyCode();
-          }
-        }
-      );
-    }
-  }
-);
-
-
-/* =====================================================
-   START
-===================================================== */
-
-(async function(){
-
-  const telegramOK =
-    initializeTelegram();
-
-
-  /*
-    If opened directly in Chrome,
-    do not continuously call protected APIs.
-  */
-
-  if(!telegramOK){
+  if(
+    !requireTelegram()
+  ){
 
     return;
+
   }
 
 
-  await loadUser();
+  if(
+    btn.classList.contains(
+      "done"
+    )
+  ){
 
-  await checkMiningStatus(
-    false
+    return;
+
+  }
+
+
+  btn.disabled =
+    true;
+
+
+  try{
+
+    const r =
+      await fetch(
+        API_BASE +
+        "/api/tasks/" +
+        encodeURIComponent(id) +
+        "/claim",
+        {
+          method:"POST",
+          headers:headers(),
+          body:JSON.stringify({})
+        }
+      );
+
+
+    const data =
+      await r.json();
+
+
+    if(!r.ok){
+
+      throw new Error(
+        data.error ||
+        "Task claim failed"
+      );
+
+    }
+
+
+    btn.classList.add(
+      "done"
+    );
+
+
+    btn.textContent =
+      "DONE";
+
+
+    await loadUser();
+
+
+    toast(
+      "🎉 +" +
+      Number(
+        data.reward ||
+        0
+      ) +
+      " BHM added"
+    );
+
+
+    updateTaskCount();
+
+
+  }catch(e){
+
+    btn.disabled =
+      false;
+
+
+    toast(
+      e.message ||
+      "Task claim failed"
+    );
+
+  }
+
+}
+
+
+/* ==========================================
+   OPEN SOCIAL TASK
+========================================== */
+
+function openTask(
+  btn,
+  id,
+  url
+){
+
+  if(
+    btn.classList.contains(
+      "done"
+    )
+  ){
+
+    return;
+
+  }
+
+
+  try{
+
+    if(
+      tg &&
+      tg.openTelegramLink &&
+      url.startsWith(
+        "https://t.me/"
+      )
+    ){
+
+      tg.openTelegramLink(
+        url
+      );
+
+    }else{
+
+      window.open(
+        url,
+        "_blank"
+      );
+
+    }
+
+  }catch(e){
+
+    window.open(
+      url,
+      "_blank"
+    );
+
+  }
+
+
+  setTimeout(
+    async () => {
+
+      try{
+
+        const r =
+          await fetch(
+            API_BASE +
+            "/api/tasks/" +
+            encodeURIComponent(id) +
+            "/claim",
+            {
+              method:"POST",
+              headers:headers(),
+              body:
+                JSON.stringify({})
+            }
+          );
+
+
+        const data =
+          await r.json();
+
+
+        if(!r.ok){
+
+          return;
+
+        }
+
+
+        btn.classList.add(
+          "done"
+        );
+
+
+        btn.textContent =
+          "DONE";
+
+
+        btn.disabled =
+          true;
+
+
+        await loadUser();
+
+
+        toast(
+          "🎉 +" +
+          Number(
+            data.reward ||
+            0
+          ) +
+          " BHM added"
+        );
+
+
+        updateTaskCount();
+
+      }catch(e){
+
+        console.error(
+          "SOCIAL TASK ERROR:",
+          e
+        );
+
+      }
+
+    },
+    1500
   );
 
-  startMiningPolling();
+}
 
-})();
+
+/* ==========================================
+   MINING UI
+========================================== */
+
+function updateMiningUI(){
+
+  const button =
+    document.getElementById(
+      "mineButton"
+    );
+
+
+  const status =
+    document.getElementById(
+      "miningStatus"
+    );
+
+
+  const timer =
+    document.getElementById(
+      "timer"
+    );
+
+
+  if(
+    !button ||
+    !status ||
+    !timer
+  ){
+
+    return;
+
+  }
+
+
+  clearInterval(
+    timerInterval
+  );
+
+
+  if(
+    !miningStartedAt
+  ){
+
+    timer.textContent =
+      "24:00:00";
+
+
+    status.textContent =
+      "Not mining";
+
+
+    button.textContent =
+      "START MINING";
+
+
+    button.classList.remove(
+      "stop",
+      "claim"
+    );
+
+
+    return;
+
+  }
+
+
+  button.textContent =
+    "STOP MINING";
+
+
+  button.classList.add(
+    "stop"
+  );
+
+
+  button.classList.remove(
+    "claim"
+  );
+
+
+  status.textContent =
+    "Mining is active";
+
+
+  function tick(){
+
+    const start =
+      new Date(
+        miningStartedAt
+      ).getTime();
+
+
+    const elapsed =
+      Math.max(
+        0,
+        Date.now() -
+        start
+      );
+
+
+    const max =
+      24 *
+      60 *
+      60 *
+      1000;
+
+
+    const remaining =
+      Math.max(
+        0,
+        max -
+        elapsed
+      );
+
+
+    const totalSeconds =
+      Math.floor(
+        remaining /
+        1000
+      );
+
+
+    const h =
+      Math.floor(
+        totalSeconds /
+        3600
+      );
+
+
+    const m =
+      Math.floor(
+        (
+          totalSeconds %
+          3600
+        ) /
+        60
+      );
+
+
+    const s =
+      totalSeconds %
+      60;
+
+
+    timer.textContent =
+      String(h).padStart(
+        2,
+        "0"
+      ) +
+      ":" +
+      String(m).padStart(
+        2,
+        "0"
+      ) +
+      ":" +
+      String(s).padStart(
+        2,
+        "0"
+      );
+
+
+    if(
+      remaining <=
+      0
+    ){
+
+      clearInterval(
+        timerInterval
+      );
+
+
+      status.textContent =
+        "24-hour session completed";
+
+
+      button.textContent =
+        "CLAIM MINING REWARD";
+
+
+      button.classList.remove(
+        "stop"
+      );
+
+
+      button.classList.add(
+        "claim"
+      );
+
+    }
+
+  }
+
+
+  tick();
+
+
+  timerInterval =
+    setInterval(
+      tick,
+      1000
+    );
+
+}
+
+
+/* ==========================================
+   MINING
+========================================== */
+
+async function toggleMining(){
+
+  if(
+    !requireTelegram()
+  ){
+
+    return;
+
+  }
+
+
+  const button =
+    document.getElementById(
+      "mineButton"
+    );
+
+
+  if(
+    button.classList.contains(
+      "claim"
+    )
+  ){
+
+    try{
+
+      const r =
+        await fetch(
+          API_BASE +
+          "/api/mining/claim",
+          {
+            method:"POST",
+            headers:headers(),
+            body:
+              JSON.stringify({})
+          }
+        );
+
+
+      const data =
+        await r.json();
+
+
+      if(!r.ok){
+
+        throw new Error(
+          data.error ||
+          "Mining claim failed"
+        );
+
+      }
+
+
+      miningStartedAt =
+        null;
+
+
+      await loadUser();
+
+
+      toast(
+        "🎉 +" +
+        Number(
+          data.reward ||
+          0
+        ) +
+        " BHM added"
+      );
+
+
+    }catch(e){
+
+      toast(
+        e.message ||
+        "Mining claim failed"
+      );
+
+    }
+
+
+    return;
+
+  }
+
+
+  if(
+    miningStartedAt
+  ){
+
+    toast(
+      "Mining is already active"
+    );
+
+    return;
+
+  }
+
+
+  button.disabled =
+    true;
+
+
+  try{
+
+    const r =
+      await fetch(
+        API_BASE +
+        "/api/mining/start",
+        {
+          method:"POST",
+          headers:headers(),
+          body:
+            JSON.stringify({})
+        }
+      );
+
+
+    const data =
+      await r.json();
+
+
+    if(!r.ok){
+
+      throw new Error(
+        data.error ||
+        "Could not start mining"
+      );
+
+    }
+
+
+    miningStartedAt =
+      data.mining_started_at ||
+      data.started_at ||
+      new Date().toISOString();
+
+
+    updateMiningUI();
+
+
+    toast(
+      "⛏️ Mining started"
+    );
+
+
+  }catch(e){
+
+    toast(
+      e.message ||
+      "Could not start mining"
+    );
+
+  }finally{
+
+    button.disabled =
+      false;
+
+  }
+
+}
+
+
+/* ==========================================
+   OPEN MINE
+========================================== */
+
+function openMine(){
+
+  document
+    .getElementById(
+      "taskScreen"
+    )
+    .style.display =
+      "none";
+
+
+  document
+    .getElementById(
+      "walletScreen"
+    )
+    .style.display =
+      "none";
+
+
+  document
+    .getElementById(
+      "mineScreen"
+    )
+    .style.display =
+      "block";
+
+
+  document
+    .querySelectorAll(
+      ".bottom button"
+    )
+    .forEach(
+      b =>
+        b.classList.remove(
+          "active"
+        )
+    );
+
+
+  document
+    .getElementById(
+      "mineNav"
+    )
+    .classList.add(
+      "active"
+    );
+
+}
+
+
+/* ==========================================
+   OPEN TASKS
+========================================== */
+
+function openTasks(){
+
+  document
+    .getElementById(
+      "mineScreen"
+    )
+    .style.display =
+      "none";
+
+
+  document
+    .getElementById(
+      "walletScreen"
+    )
+    .style.display =
+      "none";
+
+
+  document
+    .getElementById(
+      "taskScreen"
+    )
+    .style.display =
+      "block";
+
+
+  document
+    .querySelectorAll(
+      ".bottom button"
+    )
+    .forEach(
+      b =>
+        b.classList.remove(
+          "active"
+        )
+    );
+
+
+  document
+    .getElementById(
+      "taskNav"
+    )
+    .classList.add(
+      "active"
+    );
+
+}
+
+
+/* ==========================================
+   REFERRAL
+========================================== */
+
+function invite(){
+
+  if(!telegramUser){
+
+    toast(
+      "Telegram user not available"
+    );
+
+    return;
+
+  }
+
+
+  const id =
+    telegramUser.id;
+
+
+  const link =
+    "https://t.me/BharatMineBot?start=ref_" +
+    id;
+
+
+  const shareUrl =
+    "https://t.me/share/url?url=" +
+    encodeURIComponent(
+      link
+    ) +
+    "&text=" +
+    encodeURIComponent(
+      "Join me on BharatMine ⛏️"
+    );
+
+
+  try{
+
+    if(
+      tg &&
+      tg.openTelegramLink
+    ){
+
+      tg.openTelegramLink(
+        shareUrl
+      );
+
+    }else{
+
+      navigator.clipboard
+        ?.writeText(
+          link
+        );
+
+
+      toast(
+        "Referral link copied"
+      );
+
+    }
+
+  }catch(error){
+
+    navigator.clipboard
+      ?.writeText(
+        link
+      );
+
+
+    toast(
+      "Referral link copied"
+    );
+
+  }
+
+}
+
+
+/* ==========================================
+   BSC WALLET
+========================================== */
+
+const BSC_CHAIN_ID =
+  "0x38";
+
+
+let walletProvider =
+  null;
+
+
+let connectedWallet =
+  "";
+
+
+let walletVerified =
+  false;
+
+
+/* ==========================================
+   SHORT ADDRESS
+========================================== */
+
+function shortAddress(
+  address
+){
+
+  if(!address){
+
+    return "Not connected";
+
+  }
+
+
+  return (
+    address.slice(
+      0,
+      6
+    ) +
+    "..." +
+    address.slice(
+      -4
+    )
+  );
+
+}
+
+
+/* ==========================================
+   GET WALLET PROVIDER
+========================================== */
+
+function getWalletProvider(){
+
+  const p =
+    window.ethereum;
+
+
+  if(!p){
+
+    return null;
+
+  }
+
+
+  return p;
+
+}
+
+
+/* ==========================================
+   SWITCH BSC
+========================================== */
+
+async function switchToBSC(){
+
+  const p =
+    walletProvider ||
+    getWalletProvider();
+
+
+  if(!p){
+
+    throw new Error(
+      "Wallet provider not found"
+    );
+
+  }
+
+
+  try{
+
+    await p.request({
+
+      method:
+        "wallet_switchEthereumChain",
+
+      params:[
+        {
+          chainId:
+            BSC_CHAIN_ID
+        }
+      ]
+
+    });
+
+  }catch(e){
+
+    if(
+      e &&
+      e.code ===
+      4902
+    ){
+
+      await p.request({
+
+        method:
+          "wallet_addEthereumChain",
+
+        params:[
+          {
+            chainId:
+              BSC_CHAIN_ID,
+
+            chainName:
+              "BNB Smart Chain",
+
+            nativeCurrency:{
+              name:"BNB",
+              symbol:"BNB",
+              decimals:18
+            },
+
+            rpcUrls:[
+              "https://bsc-dataseed.binance.org/"
+            ],
+
+            blockExplorerUrls:[
+              "https://bscscan.com/"
+            ]
+          }
+        ]
+
+      });
+
+    }else{
+
+      throw e;
+
+    }
+
+  }
+
+}
+
+
+/* ==========================================
+   LOAD WALLET
+========================================== */
+
+async function loadWallet(){
+
+  if(
+    !requireTelegram()
+  ){
+
+    return;
+
+  }
+
+
+  try{
+
+    const r =
+      await fetch(
+        API_BASE +
+        "/api/wallet",
+        {
+          method:"GET",
+          headers:headers(),
+          cache:"no-store"
+        }
+      );
+
+
+    const data =
+      await r.json();
+
+
+    if(!r.ok){
+
+      throw new Error(
+        data.error ||
+        "Wallet load failed"
+      );
+
+    }
+
+
+    walletVerified =
+      !!data.verified;
+
+
+    connectedWallet =
+      data.wallet_address ||
+      "";
+
+
+    renderWallet();
+
+
+  }catch(e){
+
+    console.error(
+      "WALLET LOAD ERROR:",
+      e
+    );
+
+  }
+
+}
+
+
+/* ==========================================
+   RENDER WALLET
+========================================== */
+
+function renderWallet(){
+
+  const addressElement =
+    document.getElementById(
+      "walletAddress"
+    );
+
+
+  const networkElement =
+    document.getElementById(
+      "walletNetwork"
+    );
+
+
+  const verifiedElement =
+    document.getElementById(
+      "walletVerified"
+    );
+
+
+  const connectButton =
+    document.getElementById(
+      "walletConnectBtn"
+    );
+
+
+  const verifyButton =
+    document.getElementById(
+      "walletVerifyBtn"
+    );
+
+
+  const disconnectButton =
+    document.getElementById(
+      "walletDisconnectBtn"
+    );
+
+
+  if(
+    !addressElement
+  ){
+
+    return;
+
+  }
+
+
+  if(
+    connectedWallet
+  ){
+
+    addressElement.textContent =
+      shortAddress(
+        connectedWallet
+      );
+
+
+    addressElement.title =
+      connectedWallet;
+
+
+    networkElement.textContent =
+      "BNB Smart Chain • Chain ID 56";
+
+
+    verifiedElement.innerHTML =
+      walletVerified
+
+        ? '<span class="wallet-verified">✓ OWNERSHIP VERIFIED</span>'
+
+        : '<span style="color:#d9a85a;font-size:10px">Ownership not verified</span>';
+
+
+    connectButton.textContent =
+      "WALLET CONNECTED";
+
+
+    connectButton.disabled =
+      true;
+
+
+    connectButton.style.opacity =
+      ".6";
+
+
+    verifyButton.style.display =
+      walletVerified
+        ? "none"
+        : "block";
+
+
+    disconnectButton.style.display =
+      "block";
+
+
+  }else{
+
+    addressElement.textContent =
+      "Not connected";
+
+
+    networkElement.textContent =
+      "BSC Network required";
+
+
+    verifiedElement.innerHTML =
+      "";
+
+
+    connectButton.textContent =
+      "CONNECT WALLET";
+
+
+    connectButton.disabled =
+      false;
+
+
+    connectButton.style.opacity =
+      "1";
+
+
+    verifyButton.style.display =
+      "none";
+
+
+    disconnectButton.style.display =
+      "none";
+
+  }
+
+}
+
+
+/* ==========================================
+   CONNECT WALLET
+========================================== */
+
+async function connectWallet(){
+
+  if(
+    !requireTelegram()
+  ){
+
+    return;
+
+  }
+
+
+  walletProvider =
+    getWalletProvider();
+
+
+  if(!walletProvider){
+
+    toast(
+      "Wallet not found. Open in MetaMask or Trust Wallet browser."
+    );
+
+    return;
+
+  }
+
+
+  try{
+
+    const accounts =
+      await walletProvider.request({
+
+        method:
+          "eth_requestAccounts"
+
+      });
+
+
+    if(
+      !accounts ||
+      !accounts[0]
+    ){
+
+      throw new Error(
+        "No wallet account returned"
+      );
+
+    }
+
+
+    await switchToBSC();
+
+
+    const address =
+      accounts[0];
+
+
+    const r =
+      await fetch(
+        API_BASE +
+        "/api/wallet/connect",
+        {
+          method:"POST",
+          headers:headers(),
+          body:
+            JSON.stringify({
+              address:
+                address,
+
+              chainId:
+                56
+            })
+        }
+      );
+
+
+    const data =
+      await r.json();
+
+
+    if(!r.ok){
+
+      throw new Error(
+        data.error ||
+        "Wallet connection failed"
+      );
+
+    }
+
+
+    connectedWallet =
+      data.wallet_address ||
+      address;
+
+
+    walletVerified =
+      !!data.verified;
+
+
+    renderWallet();
+
+
+    toast(
+      walletVerified
+
+        ? "Wallet already verified"
+
+        : "Wallet connected — verify ownership"
+    );
+
+
+  }catch(e){
+
+    console.error(
+      "WALLET CONNECT ERROR:",
+      e
+    );
+
+
+    toast(
+      e.message ||
+      "Wallet connection failed"
+    );
+
+  }
+
+}
+
+
+/* ==========================================
+   VERIFY WALLET
+========================================== */
+
+async function verifyWallet(){
+
+  if(
+    !requireTelegram()
+  ){
+
+    return;
+
+  }
+
+
+  if(
+    !connectedWallet
+  ){
+
+    toast(
+      "Connect wallet first"
+    );
+
+    return;
+
+  }
+
+
+  walletProvider =
+    walletProvider ||
+    getWalletProvider();
+
+
+  if(!walletProvider){
+
+    toast(
+      "Wallet provider not found"
+    );
+
+    return;
+
+  }
+
+
+  const button =
+    document.getElementById(
+      "walletVerifyBtn"
+    );
+
+
+  button.disabled =
+    true;
+
+
+  try{
+
+    await switchToBSC();
+
+
+    const nonceResponse =
+      await fetch(
+        API_BASE +
+        "/api/wallet/nonce",
+        {
+          method:"POST",
+          headers:headers(),
+          body:
+            JSON.stringify({
+              address:
+                connectedWallet,
+
+              chainId:
+                56
+            })
+        }
+      );
+
+
+    const nonceData =
+      await nonceResponse.json();
+
+
+    if(
+      !nonceResponse.ok
+    ){
+
+      throw new Error(
+        nonceData.error ||
+        "Could not create verification request"
+      );
+
+    }
+
+
+    const signature =
+      await walletProvider.request({
+
+        method:
+          "personal_sign",
+
+        params:[
+          nonceData.message,
+          connectedWallet
+        ]
+
+      });
+
+
+    const verifyResponse =
+      await fetch(
+        API_BASE +
+        "/api/wallet/verify",
+        {
+          method:"POST",
+          headers:headers(),
+          body:
+            JSON.stringify({
+
+              address:
+                connectedWallet,
+
+              chainId:
+                56,
+
+              signature:
+                signature
+
+            })
+        }
+      );
+
+
+    const data =
+      await verifyResponse.json();
+
+
+    if(
+      !verifyResponse.ok
+    ){
+
+      throw new Error(
+        data.error ||
+        "Wallet verification failed"
+      );
+
+    }
+
+
+    walletVerified =
+      true;
+
+
+    renderWallet();
+
+
+    toast(
+      "✓ Wallet ownership verified"
+    );
+
+
+  }catch(e){
+
+    console.error(
+      "WALLET VERIFY ERROR:",
+      e
+    );
+
+
+    toast(
+      e.message ||
+      "Wallet verification failed"
+    );
+
+  }finally{
+
+    button.disabled =
+      false;
+
+  }
+
+}
+
+
+/* ==========================================
+   DISCONNECT WALLET
+========================================== */
+
+async function disconnectWallet(){
+
+  if(
+    !requireTelegram()
+  ){
+
+    return;
+
+  }
+
+
+  try{
+
+    const r =
+      await fetch(
+        API_BASE +
+        "/api/wallet",
+        {
+          method:"DELETE",
+          headers:headers()
+        }
+      );
+
+
+    const data =
+      await r.json();
+
+
+    if(!r.ok){
+
+      throw new Error(
+        data.error ||
+        "Disconnect failed"
+      );
+
+    }
+
+
+    connectedWallet =
+      "";
+
+
+    walletVerified =
+      false;
+
+
+    renderWallet();
+
+
+    toast(
+      "Wallet disconnected"
+    );
+
+
+  }catch(e){
+
+    toast(
+      e.message ||
+      "Disconnect failed"
+    );
+
+  }
+
+}
+
+
+/* ==========================================
+   OPEN WALLET
+========================================== */
+
+function openWallet(){
+
+  document
+    .getElementById(
+      "taskScreen"
+    )
+    .style.display =
+      "none";
+
+
+  document
+    .getElementById(
+      "mineScreen"
+    )
+    .style.display =
+      "none";
+
+
+  document
+    .getElementById(
+      "walletScreen"
+    )
+    .style.display =
+      "block";
+
+
+  document
+    .querySelectorAll(
+      ".bottom button"
+    )
+    .forEach(
+      b =>
+        b.classList.remove(
+          "active"
+        )
+    );
+
+
+  const buttons =
+    document.querySelectorAll(
+      ".bottom button"
+    );
+
+
+  if(
+    buttons[3]
+  ){
+
+    buttons[3].classList.add(
+      "active"
+    );
+
+  }
+
+
+  loadWallet();
+
+}
+
+
+/* ==========================================
+   ENTER KEY
+========================================== */
+
+const dailyInput =
+  document.getElementById(
+    "dailyCodeInput"
+  );
+
+
+if(dailyInput){
+
+  dailyInput.addEventListener(
+    "keydown",
+    function(e){
+
+      if(
+        e.key ===
+        "Enter"
+      ){
+
+        claimDailyCode();
+
+      }
+
+    }
+  );
+
+}
+
+
+/* ==========================================
+   WALLET EVENTS
+========================================== */
+
+function setupWalletEvents(){
+
+  walletProvider =
+    getWalletProvider();
+
+
+  if(
+    walletProvider &&
+    walletProvider.on
+  ){
+
+    walletProvider.on(
+      "accountsChanged",
+      function(){
+
+        loadWallet();
+
+      }
+    );
+
+
+    walletProvider.on(
+      "chainChanged",
+      function(){
+
+        loadWallet();
+
+      }
+    );
+
+  }
+
+}
+
+
+/* ==========================================
+   START APP
+========================================== */
+
+initializeTelegram();
+
+loadUser();
+
+loadWallet();
+
+setupWalletEvents();
+
 </script>
 
 </body>
+
 </html>

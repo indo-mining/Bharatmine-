@@ -1,6 +1,6 @@
 {
   "name": "bharatmine-backend",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "scripts": {
     "start": "node server.js"
@@ -9,6 +9,7 @@
     "express": "^5.1.0",
     "pg": "^8.16.3",
     "dotenv": "^17.2.1",
-    "cors": "^2.8.5"
+    "cors": "^2.8.5",
+    "ethers": "^6.15.0"
   }
 }
